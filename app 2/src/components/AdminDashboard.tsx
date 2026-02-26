@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/select';
 import { orderApi } from '@/services/orderApi';
 import { adminCatalogApi } from '@/services/adminCatalogApi';
+import { shippingTracker, type ShippingCompany, type Shipment, type ShipmentStatus } from '@/services/shippingTracker';
 import { useDataManager } from '@/services/dataManager';
 import { recommendationEngine } from '@/services/recommendationEngine';
 import { couponApi, type Coupon } from '@/services/couponApi';
@@ -108,6 +109,11 @@ interface Order {
   shipping_address: {
     full_name: string;
     email: string;
+    phone?: string;
+    full_address?: string;
+    city?: string;
+    zip?: string;
+    country?: string;
   };
   items: OrderItem[];
   status_history?: OrderStatusHistory[];
@@ -125,6 +131,35 @@ interface FinancePeriodRow {
   refundedRevenue: number;
   commission: number;
   orderCount: number;
+}
+
+interface LogisticsIntegration {
+  company: ShippingCompany;
+  label: string;
+  enabled: boolean;
+  apiKey: string;
+  senderCode: string;
+}
+
+interface ShippingFeeRules {
+  flat: {
+    enabled: boolean;
+    amount: number;
+  };
+  byBasket: {
+    enabled: boolean;
+    minTotalForFree: number;
+    defaultAmount: number;
+  };
+  byRegion: {
+    enabled: boolean;
+    marmara: number;
+    icAnadolu: number;
+    ege: number;
+    akdeniz: number;
+    karadeniz: number;
+    doguGuneydogu: number;
+  };
 }
 
 interface AlertItem {
@@ -256,6 +291,33 @@ const PAYMENT_METHOD_COMMISSION_RATE: Record<string, number> = {
   bank_transfer: 0.005,
   cod: 0.015,
   cash_on_delivery: 0.015,
+};
+
+const LOGISTICS_INTEGRATION_KEY = 'cvk_logistics_integrations_v1';
+const SHIPPING_RULES_KEY = 'cvk_shipping_rules_v1';
+
+const DEFAULT_LOGISTICS_INTEGRATIONS: LogisticsIntegration[] = [
+  { company: 'yurtici', label: 'Yurtici Kargo', enabled: true, apiKey: '', senderCode: 'CVK-MERKEZ' },
+  { company: 'aras', label: 'Aras Kargo', enabled: false, apiKey: '', senderCode: 'CVK-MERKEZ' },
+  { company: 'mng', label: 'MNG Kargo', enabled: false, apiKey: '', senderCode: 'CVK-MERKEZ' },
+  { company: 'ptt', label: 'PTT Kargo', enabled: false, apiKey: '', senderCode: 'CVK-MERKEZ' },
+  { company: 'ups', label: 'UPS', enabled: false, apiKey: '', senderCode: 'CVK-MERKEZ' },
+  { company: 'dhl', label: 'DHL', enabled: false, apiKey: '', senderCode: 'CVK-MERKEZ' },
+  { company: 'fedex', label: 'FedEx', enabled: false, apiKey: '', senderCode: 'CVK-MERKEZ' },
+];
+
+const DEFAULT_SHIPPING_RULES: ShippingFeeRules = {
+  flat: { enabled: true, amount: 25 },
+  byBasket: { enabled: true, minTotalForFree: 500, defaultAmount: 25 },
+  byRegion: {
+    enabled: false,
+    marmara: 22,
+    icAnadolu: 25,
+    ege: 24,
+    akdeniz: 26,
+    karadeniz: 27,
+    doguGuneydogu: 30,
+  },
 };
 
 const lowStockCatalog = [
@@ -747,6 +809,10 @@ export default function AdminDashboard() {
   const [orderDateFilter, setOrderDateFilter] = useState<'all' | 'today' | '7days' | '30days' | '90days'>('all');
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [orderActionLoadingId, setOrderActionLoadingId] = useState<number | null>(null);
+  const [logisticsIntegrations, setLogisticsIntegrations] = useState<LogisticsIntegration[]>(DEFAULT_LOGISTICS_INTEGRATIONS);
+  const [shippingRules, setShippingRules] = useState<ShippingFeeRules>(DEFAULT_SHIPPING_RULES);
+  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
   const [dateRange, setDateRange] = useState('7days');
   const [loading, setLoading] = useState(true);
@@ -769,6 +835,8 @@ export default function AdminDashboard() {
     loadCoupons();
     loadDepotsFromLocal();
     loadCatalogFromBackend();
+    loadLogisticsConfig();
+    loadShipments();
   }, []);
 
   const loadData = async () => {
@@ -872,6 +940,37 @@ export default function AdminDashboard() {
     }
   };
 
+  const loadLogisticsConfig = () => {
+    try {
+      const rawIntegrations = localStorage.getItem(LOGISTICS_INTEGRATION_KEY);
+      if (rawIntegrations) {
+        const parsed = JSON.parse(rawIntegrations);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setLogisticsIntegrations(parsed as LogisticsIntegration[]);
+        }
+      }
+    } catch {
+      setLogisticsIntegrations(DEFAULT_LOGISTICS_INTEGRATIONS);
+    }
+
+    try {
+      const rawRules = localStorage.getItem(SHIPPING_RULES_KEY);
+      if (rawRules) {
+        const parsed = JSON.parse(rawRules);
+        if (parsed && typeof parsed === 'object') {
+          setShippingRules(parsed as ShippingFeeRules);
+        }
+      }
+    } catch {
+      setShippingRules(DEFAULT_SHIPPING_RULES);
+    }
+  };
+
+  const loadShipments = () => {
+    const all = shippingTracker.getAllShipments();
+    setShipments(all);
+  };
+
   const initializeInventoryForProducts = (sourceProducts: ManagedProduct[], depotList: string[]) => {
     const variants = sourceProducts.flatMap((product) =>
       product.variants.map((variant) => ({
@@ -945,6 +1044,14 @@ export default function AdminDashboard() {
       return { ...prev, depot: depots[0] || '' };
     });
   }, [depots]);
+
+  useEffect(() => {
+    localStorage.setItem(LOGISTICS_INTEGRATION_KEY, JSON.stringify(logisticsIntegrations));
+  }, [logisticsIntegrations]);
+
+  useEffect(() => {
+    localStorage.setItem(SHIPPING_RULES_KEY, JSON.stringify(shippingRules));
+  }, [shippingRules]);
 
   useEffect(() => {
     if (!catalogLoaded || !remoteCatalogEnabled) return;
@@ -1192,6 +1299,39 @@ export default function AdminDashboard() {
     () => orders.find((order) => order.id === selectedOrderId) || null,
     [orders, selectedOrderId]
   );
+
+  const selectedShipment = useMemo(
+    () => shipments.find((shipment) => shipment.id === selectedShipmentId) || null,
+    [shipments, selectedShipmentId]
+  );
+
+  const detectRegion = (cityRaw?: string): keyof ShippingFeeRules['byRegion'] => {
+    const city = (cityRaw || '').toLocaleLowerCase('tr-TR');
+    if (['istanbul', 'bursa', 'kocaeli', 'tekirdag', 'balikesir', 'edirne', 'yalova', 'canakkale', 'sakarya'].includes(city)) return 'marmara';
+    if (['ankara', 'eskisehir', 'konya', 'kayseri', 'sivas', 'kirikkale'].includes(city)) return 'icAnadolu';
+    if (['izmir', 'manisa', 'aydin', 'mugla', 'denizli', 'kutahya', 'afyon'].includes(city)) return 'ege';
+    if (['antalya', 'mersin', 'adana', 'hatay', 'isparta', 'burdur', 'kahramanmaras'].includes(city)) return 'akdeniz';
+    if (['samsun', 'trabzon', 'ordu', 'rize', 'sinop', 'zonguldak', 'giresun'].includes(city)) return 'karadeniz';
+    return 'doguGuneydogu';
+  };
+
+  const calculateShippingFeePreview = (order: Order): number => {
+    const orderTotal = order.total_amount || 0;
+    if (shippingRules.byRegion.enabled) {
+      const region = detectRegion(order.shipping_address?.city);
+      return Number(shippingRules.byRegion[region] || 0);
+    }
+    if (shippingRules.byBasket.enabled) {
+      if (orderTotal >= shippingRules.byBasket.minTotalForFree) return 0;
+      return Number(shippingRules.byBasket.defaultAmount || 0);
+    }
+    if (shippingRules.flat.enabled) {
+      return Number(shippingRules.flat.amount || 0);
+    }
+    return Number(order.shipping_cost || 0);
+  };
+
+  const mapCodeToCompanyName = (code: ShippingCompany): string => shippingTracker.getCompanyInfo(code).name;
 
   const orderOpsSummary = useMemo(
     () => ({
@@ -1688,7 +1828,9 @@ export default function AdminDashboard() {
 
   const handleCreateShipment = async (order: Order) => {
     const trackingNumber = generateTrackingNumber();
-    const shippingCompany = order.shipping_company || 'Yurtici Kargo';
+    const activeIntegration = logisticsIntegrations.find((item) => item.enabled) || DEFAULT_LOGISTICS_INTEGRATIONS[0];
+    const companyCode = activeIntegration.company;
+    const shippingCompany = mapCodeToCompanyName(companyCode);
     setOrderActionLoadingId(order.id);
     try {
       const result = await orderApi.updateOrderStatus(
@@ -1701,6 +1843,22 @@ export default function AdminDashboard() {
         toast.error(result.message || 'Kargo olusturulamadi.');
         return;
       }
+
+      shippingTracker.createShipment(
+        order.id,
+        order.order_number,
+        trackingNumber,
+        companyCode,
+        {
+          name: order.shipping_address?.full_name || 'Müşteri',
+          phone: order.shipping_address?.phone || '-',
+          email: order.shipping_address?.email || '-',
+          address: order.shipping_address?.full_address || '-',
+          city: order.shipping_address?.city || '-',
+        }
+      );
+      loadShipments();
+
       await orderApi.sendCustomerNotification(order.id, 'email', 'shipment_created');
       await orderApi.sendCustomerNotification(order.id, 'sms', 'shipment_created');
       toast.success(`Kargo oluşturuldu: ${trackingNumber}`);
@@ -1734,6 +1892,37 @@ export default function AdminDashboard() {
     } finally {
       setOrderActionLoadingId(null);
     }
+  };
+
+  const handleToggleIntegration = (company: ShippingCompany) => {
+    setLogisticsIntegrations((prev) =>
+      prev.map((item) => (item.company === company ? { ...item, enabled: !item.enabled } : item))
+    );
+  };
+
+  const handleIntegrationField = (company: ShippingCompany, field: 'apiKey' | 'senderCode', value: string) => {
+    setLogisticsIntegrations((prev) =>
+      prev.map((item) => (item.company === company ? { ...item, [field]: value } : item))
+    );
+  };
+
+  const handleCheckAllTracking = async () => {
+    await shippingTracker.checkAllShipments();
+    loadShipments();
+    toast.success('Teslimat durumları güncellendi.');
+  };
+
+  const handleShipmentStatusUpdate = (shipmentId: string, status: ShipmentStatus) => {
+    const shipment = shipments.find((item) => item.id === shipmentId);
+    if (!shipment) return;
+
+    shippingTracker.updateStatus(shipmentId, status, {
+      location: shipment.recipient.city || 'Merkez',
+      status,
+      description: `Durum admin panelden ${shippingTracker.getStatusLabel(status)} olarak güncellendi`,
+    });
+    loadShipments();
+    toast.success('Teslimat durumu güncellendi.');
   };
 
   const handleGenerateInvoicePdf = (order: Order) => {
@@ -2299,11 +2488,12 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-10">
           <TabsTrigger value="overview">Dashboard</TabsTrigger>
           <TabsTrigger value="orders">Siparişler</TabsTrigger>
           <TabsTrigger value="finance">Ödeme & Finans</TabsTrigger>
           <TabsTrigger value="analytics">Analitik</TabsTrigger>
+          <TabsTrigger value="logistics">Kargo & Lojistik</TabsTrigger>
           <TabsTrigger value="products">Ürün Yönetimi</TabsTrigger>
           <TabsTrigger value="inventory">Stok & Envanter</TabsTrigger>
           <TabsTrigger value="campaigns">Kampanyalar</TabsTrigger>
@@ -3086,6 +3276,204 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="logistics" className="space-y-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Toplam Kargo</p><p className="text-2xl font-bold">{shipments.length}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Aktif Teslimat</p><p className="text-2xl font-bold text-indigo-600">{shippingTracker.getStats().active}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Teslim Edilen</p><p className="text-2xl font-bold text-green-600">{shippingTracker.getStats().delivered}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Ort. Teslimat (gün)</p><p className="text-2xl font-bold text-[#0077be]">{shippingTracker.getStats().avgDeliveryTime}</p></CardContent></Card>
+          </div>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Kargo Firması Entegrasyonları</CardTitle>
+                <CardDescription>API anahtarı, gönderici kodu ve aktif/pasif yönetimi</CardDescription>
+              </div>
+              <Button variant="outline" onClick={handleCheckAllTracking}>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Teslimatları Güncelle
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {logisticsIntegrations.map((integration) => (
+                <div key={integration.company} className="border rounded-xl p-3 grid grid-cols-1 lg:grid-cols-5 gap-2 items-center">
+                  <div>
+                    <p className="font-semibold">{integration.label}</p>
+                    <p className="text-xs text-gray-500">{integration.company}</p>
+                  </div>
+                  <Input
+                    placeholder="API Key"
+                    value={integration.apiKey}
+                    onChange={(event) => handleIntegrationField(integration.company, 'apiKey', event.target.value)}
+                  />
+                  <Input
+                    placeholder="Sender Code"
+                    value={integration.senderCode}
+                    onChange={(event) => handleIntegrationField(integration.company, 'senderCode', event.target.value)}
+                  />
+                  <Badge className={integration.enabled ? 'bg-green-100 text-green-700 w-fit' : 'bg-gray-100 text-gray-700 w-fit'}>
+                    {integration.enabled ? 'Entegre Aktif' : 'Pasif'}
+                  </Badge>
+                  <Button variant="outline" onClick={() => handleToggleIntegration(integration.company)}>
+                    {integration.enabled ? 'Pasif Yap' : 'Aktif Yap'}
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Kargo Ücret Kuralları</CardTitle>
+              <CardDescription>Sabit, sepete göre veya bölgeye göre kargo fiyatlandırma</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="border rounded-xl p-3 space-y-2">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={shippingRules.flat.enabled}
+                      onChange={(e) => setShippingRules((prev) => ({ ...prev, flat: { ...prev.flat, enabled: e.target.checked } }))}
+                    />
+                    Sabit ücret
+                  </label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={shippingRules.flat.amount}
+                    onChange={(e) => setShippingRules((prev) => ({ ...prev, flat: { ...prev.flat, amount: Number(e.target.value) || 0 } }))}
+                    placeholder="Sabit kargo ücreti"
+                  />
+                </div>
+
+                <div className="border rounded-xl p-3 space-y-2">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={shippingRules.byBasket.enabled}
+                      onChange={(e) => setShippingRules((prev) => ({ ...prev, byBasket: { ...prev.byBasket, enabled: e.target.checked } }))}
+                    />
+                    Sepete göre
+                  </label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={shippingRules.byBasket.minTotalForFree}
+                    onChange={(e) => setShippingRules((prev) => ({ ...prev, byBasket: { ...prev.byBasket, minTotalForFree: Number(e.target.value) || 0 } }))}
+                    placeholder="Ücretsiz kargo eşiği"
+                  />
+                  <Input
+                    type="number"
+                    min={0}
+                    value={shippingRules.byBasket.defaultAmount}
+                    onChange={(e) => setShippingRules((prev) => ({ ...prev, byBasket: { ...prev.byBasket, defaultAmount: Number(e.target.value) || 0 } }))}
+                    placeholder="Eşik altı kargo ücreti"
+                  />
+                </div>
+
+                <div className="border rounded-xl p-3 space-y-2">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={shippingRules.byRegion.enabled}
+                      onChange={(e) => setShippingRules((prev) => ({ ...prev, byRegion: { ...prev.byRegion, enabled: e.target.checked } }))}
+                    />
+                    Bölgeye göre
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input type="number" min={0} value={shippingRules.byRegion.marmara} onChange={(e) => setShippingRules((prev) => ({ ...prev, byRegion: { ...prev.byRegion, marmara: Number(e.target.value) || 0 } }))} placeholder="Marmara" />
+                    <Input type="number" min={0} value={shippingRules.byRegion.icAnadolu} onChange={(e) => setShippingRules((prev) => ({ ...prev, byRegion: { ...prev.byRegion, icAnadolu: Number(e.target.value) || 0 } }))} placeholder="İç Anadolu" />
+                    <Input type="number" min={0} value={shippingRules.byRegion.ege} onChange={(e) => setShippingRules((prev) => ({ ...prev, byRegion: { ...prev.byRegion, ege: Number(e.target.value) || 0 } }))} placeholder="Ege" />
+                    <Input type="number" min={0} value={shippingRules.byRegion.akdeniz} onChange={(e) => setShippingRules((prev) => ({ ...prev, byRegion: { ...prev.byRegion, akdeniz: Number(e.target.value) || 0 } }))} placeholder="Akdeniz" />
+                    <Input type="number" min={0} value={shippingRules.byRegion.karadeniz} onChange={(e) => setShippingRules((prev) => ({ ...prev, byRegion: { ...prev.byRegion, karadeniz: Number(e.target.value) || 0 } }))} placeholder="Karadeniz" />
+                    <Input type="number" min={0} value={shippingRules.byRegion.doguGuneydogu} onChange={(e) => setShippingRules((prev) => ({ ...prev, byRegion: { ...prev.byRegion, doguGuneydogu: Number(e.target.value) || 0 } }))} placeholder="Doğu/G.Doğu" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Teslimat Durumu Takibi</CardTitle>
+              <CardDescription>Otomatik kargo kodları ve durum güncellemeleri</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2 px-3">Sipariş</th>
+                      <th className="text-left py-2 px-3">Firma</th>
+                      <th className="text-left py-2 px-3">Takip No</th>
+                      <th className="text-left py-2 px-3">Durum</th>
+                      <th className="text-left py-2 px-3">Tahmini Kargo Ücreti</th>
+                      <th className="text-left py-2 px-3">İşlem</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shipments.map((shipment) => {
+                      const order = orders.find((item) => item.id === shipment.orderId);
+                      const expectedShipping = order ? calculateShippingFeePreview(order) : 0;
+                      return (
+                        <tr key={shipment.id} className="border-b">
+                          <td className="py-2 px-3">
+                            <p className="font-medium">{shipment.orderNumber}</p>
+                            <p className="text-xs text-gray-500">{shipment.recipient.name}</p>
+                          </td>
+                          <td className="py-2 px-3">{shippingTracker.getCompanyInfo(shipment.company).name}</td>
+                          <td className="py-2 px-3">{shipment.trackingNumber}</td>
+                          <td className="py-2 px-3">
+                            <Select value={shipment.status} onValueChange={(value) => handleShipmentStatusUpdate(shipment.id, value as ShipmentStatus)}>
+                              <SelectTrigger className="w-[170px] h-8"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">Beklemede</SelectItem>
+                                <SelectItem value="label_created">Etiket Oluşturuldu</SelectItem>
+                                <SelectItem value="picked_up">Alındı</SelectItem>
+                                <SelectItem value="in_transit">Yolda</SelectItem>
+                                <SelectItem value="out_for_delivery">Dağıtımda</SelectItem>
+                                <SelectItem value="delivered">Teslim Edildi</SelectItem>
+                                <SelectItem value="exception">Sorun</SelectItem>
+                                <SelectItem value="returned">İade</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="py-2 px-3">{currency.format(expectedShipping)}</td>
+                          <td className="py-2 px-3">
+                            <Button size="sm" variant="outline" onClick={() => setSelectedShipmentId(shipment.id)}>Detay</Button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {shipments.length === 0 && (
+                  <div className="py-8 text-center text-sm text-gray-500">Henüz oluşturulmuş kargo kaydı yok. Siparişler sekmesinden kargo oluşturabilirsiniz.</div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {selectedShipment && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Kargo Detayı • {selectedShipment.orderNumber}</CardTitle>
+                <CardDescription>{selectedShipment.trackingNumber} • {selectedShipment.recipient.city}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {selectedShipment.history.map((event, idx) => (
+                  <div key={`${event.date}-${idx}`} className="border rounded-lg p-3">
+                    <p className="font-medium">{event.description}</p>
+                    <p className="text-xs text-gray-500">{event.location} • {new Date(event.date).toLocaleString('tr-TR')}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="products" className="space-y-4">

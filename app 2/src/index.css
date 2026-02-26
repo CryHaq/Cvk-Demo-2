@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* CVKDijital Color Palette */
+    --cvk-primary: #0077be;
+    --cvk-primary-dark: #005a8f;
+    --cvk-primary-light: #0095e8;
+    --cvk-secondary: #00a8e8;
+    --cvk-accent: #ff6b35;
+    --cvk-success: #28a745;
+    --cvk-warning: #ffc107;
+    
+    /* Light Mode Colors */
+    --cvk-bg-primary: #ffffff;
+    --cvk-bg-secondary: #f0f7fc;
+    --cvk-bg-tertiary: #e8f4fc;
+    --cvk-bg-card: #ffffff;
+    --cvk-bg-hover: #f1f5f9;
+    
+    --cvk-text-primary: #1a1a2e;
+    --cvk-text-secondary: #4a5568;
+    --cvk-text-tertiary: #718096;
+    --cvk-text-muted: #94a3b8;
+    --cvk-text-inverse: #ffffff;
+    
+    --cvk-border: #e2e8f0;
+    --cvk-border-light: #edf2f7;
+    --cvk-border-hover: #cbd5e1;
+    
+    /* Shadows */
+    --cvk-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --cvk-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --cvk-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --cvk-shadow-md: 0 6px 10px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --cvk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --cvk-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    
+    /* shadcn/ui variables - Light Mode */
+    --background: 210 50% 97%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 200 100% 37%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 200 100% 37%;
+    --radius: 0.5rem;
+  }
+
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--cvk-bg-secondary);
+    color: var(--cvk-text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+}
+
+@layer components {
+  .cvk-page {
+    @apply w-full min-h-screen;
+    background:
+      radial-gradient(circle at 12% 14%, rgba(0, 119, 190, 0.08), transparent 32%),
+      radial-gradient(circle at 88% 80%, rgba(0, 168, 232, 0.1), transparent 34%),
+      var(--cvk-bg-secondary);
+  }
+
+  .cvk-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .cvk-container-lg {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .cvk-container-md {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .cvk-container-sm {
+    @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .cvk-panel {
+    @apply bg-white dark:bg-[#1e293b] rounded-2xl border border-[#0077be]/10 shadow-md;
+  }
+
+  .cvk-panel-subtle {
+    @apply bg-white dark:bg-[#1e293b] rounded-2xl border border-[#0077be]/10 shadow-sm;
+  }
+
+  .cvk-heading-xl {
+    @apply text-3xl lg:text-4xl font-bold tracking-tight text-[#1a1a2e] dark:text-[#f8fafc];
+  }
+
+  .cvk-btn-primary {
+    @apply bg-[#0077be] text-white border border-transparent;
+    box-shadow: 0 8px 24px -12px rgba(0, 119, 190, 0.75);
+  }
+
+  .cvk-btn-primary:hover {
+    background-color: #005a8f;
+    color: #fff;
+  }
+
+  .cvk-btn-outline {
+    @apply border border-[#0077be] text-[#0077be] bg-transparent;
+  }
+
+  .cvk-btn-outline:hover {
+    background-color: #0077be;
+    color: #fff;
+  }
+
+  /* Card styles */
+  .cvk-card {
+    @apply bg-white dark:bg-[#1e293b] rounded-xl shadow-sm;
+    background-color: var(--cvk-bg-card);
+    border: 1px solid var(--cvk-border);
+  }
+  
+  /* Button variants */
+  .cvk-btn-primary {
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200;
+    background-color: var(--cvk-primary);
+    color: white;
+    box-shadow: var(--cvk-shadow-sm);
+  }
+  
+  .cvk-btn-primary:hover {
+    background-color: var(--cvk-primary-dark);
+    box-shadow: var(--cvk-shadow);
+    transform: translateY(-1px);
+  }
+  
+  .cvk-btn-secondary {
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200;
+    background-color: var(--cvk-bg-tertiary);
+    color: var(--cvk-text-primary);
+    border: 1px solid var(--cvk-border);
+  }
+  
+  .cvk-btn-secondary:hover {
+    background-color: var(--cvk-bg-hover);
+    border-color: var(--cvk-border-hover);
+  }
+  
+  /* Input styles */
+  .cvk-input {
+    @apply px-4 py-3 rounded-lg outline-none transition-all duration-200;
+    background-color: var(--cvk-bg-primary);
+    border: 1px solid var(--cvk-border);
+    color: var(--cvk-text-primary);
+  }
+  
+  .cvk-input:focus {
+    border-color: var(--cvk-primary);
+    box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.1);
+  }
+  
+  .cvk-input::placeholder {
+    color: var(--cvk-text-muted);
+  }
+  
+  /* Dark mode input focus */
+  .dark .cvk-input:focus {
+    box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.2);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, var(--cvk-primary) 0%, var(--cvk-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .bg-cvk-gradient {
+    background: linear-gradient(135deg, var(--cvk-bg-tertiary) 0%, var(--cvk-bg-secondary) 100%);
+  }
+  
+  .bg-cvk-primary {
+    background-color: var(--cvk-primary);
+  }
+  
+  .text-cvk-primary {
+    color: var(--cvk-primary);
+  }
+  
+  .border-cvk-primary {
+    border-color: var(--cvk-primary);
+  }
+  
+  .hover\:bg-cvk-primary-dark:hover {
+    background-color: var(--cvk-primary-dark);
+  }
+  
+  .shadow-cvk {
+    box-shadow: var(--cvk-shadow);
+  }
+  
+  .shadow-cvk-lg {
+    box-shadow: var(--cvk-shadow-lg);
+  }
+  
+}
+
+/* Custom scrollbar - Light Mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cvk-bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cvk-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cvk-primary-dark);
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(0, 119, 190, 0.2);
+  color: var(--cvk-text-primary);
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--cvk-primary);
+  outline-offset: 2px;
+}
+
+/* Input autofill styling - Light Mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--cvk-text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--cvk-bg-primary) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
+/* Smooth transitions for theme switching */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Exclude certain elements from transition */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}

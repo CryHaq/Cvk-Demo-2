@@ -1,0 +1,372 @@
+{
+  "common": {
+    "appName": "CVK Digital",
+    "tagline": "Solutions de signalétique et d'impression numérique",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "view": "Voir",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "continue": "Continuer",
+    "submit": "Soumettre",
+    "success": "Succès",
+    "warning": "Attention",
+    "info": "Info",
+    "yes": "Oui",
+    "no": "Non",
+    "or": "ou",
+    "and": "et",
+    "from": "à partir de",
+    "to": "à",
+    "all": "Tous",
+    "none": "Aucun",
+    "select": "Sélectionner",
+    "selected": "Sélectionné",
+    "optional": "Optionnel",
+    "required": "Requis",
+    "perPiece": "par pièce",
+    "free": "GRATUIT",
+    "new": "NOUVEAU",
+    "popular": "POPULAIRE",
+    "sale": "SOLDES",
+    "bestseller": "MEILLEURE VENTE",
+    "customize": "Personnaliser",
+    "configure": "Configurer",
+    "calculate": "Calculer le prix",
+    "addToCart": "Ajouter au panier",
+    "addToWishlist": "Ajouter à la liste de souhaits",
+    "removeFromWishlist": "Retirer de la liste de souhaits",
+    "compare": "Comparer",
+    "share": "Partager",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "readMore": "Lire la suite",
+    "showMore": "Afficher plus",
+    "showLess": "Afficher moins",
+    "viewAll": "Voir tout",
+    "seeDetails": "Voir les détails",
+    "contactUs": "Contactez-nous",
+    "getOffer": "Demander un devis",
+    "callNow": "Appelez maintenant",
+    "sendMessage": "Envoyer un message"
+  },
+  "nav": {
+    "home": "Accueil",
+    "shop": "Boutique",
+    "products": "Produits",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "about": "À propos",
+    "contact": "Contact",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "support": "Support",
+    "cart": "Panier",
+    "wishlist": "Liste de souhaits",
+    "account": "Mon compte",
+    "orders": "Mes commandes",
+    "admin": "Panneau d'administration",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "S'inscrire"
+  },
+  "hero": {
+    "title": "Solutions innovantes en signalétique et impression numérique",
+    "subtitle": "Créez votre enseigne de rêve en minutes avec notre configurateur 3D. Résultats professionnels, livraison ultra rapide.",
+    "ctaPrimary": "Commencer à concevoir",
+    "ctaSecondary": "Explorer les produits",
+    "badge": "50 000+ projets réalisés",
+    "features": {
+      "freeDesign": "Design gratuit",
+      "fastDelivery": "Livraison rapide",
+      "installment": "Paiement en plusieurs fois",
+      "warranty": "Garantie 2 ans"
+    }
+  },
+  "categories": {
+    "title": "Catégories de produits",
+    "subtitle": "Découvrez nos produits pour chaque besoin",
+    "all": "Toutes les catégories",
+    "indoor": "Intérieur",
+    "outdoor": "Extérieur",
+    "event": "Événement & Organisation",
+    "stand": "Stand de foire",
+    "retail": "Commerce de détail",
+    "corporate": "Identité d'entreprise",
+    "led": "Écrans LED"
+  },
+  "products": {
+    "title": "Nos produits",
+    "subtitle": "Produits de signalétique et d'impression numérique de haute qualité",
+    "noProducts": "Aucun produit trouvé",
+    "noProductsDesc": "Essayez de modifier vos filtres ou termes de recherche",
+    "specs": "Spécifications techniques",
+    "features": "Caractéristiques",
+    "usageAreas": "Zones d'utilisation",
+    "dimensions": "Dimensions",
+    "material": "Matériau",
+    "color": "Couleur",
+    "colors": "Couleurs",
+    "customize": "Personnaliser",
+    "inStock": "En stock",
+    "outOfStock": "Rupture de stock",
+    "estimatedDelivery": "Livraison estimée",
+    "minOrder": "Commande minimum",
+    "pricePerPiece": "Prix à l'unité"
+  },
+  "configurator": {
+    "title": "Configurateur 3D",
+    "subtitle": "Créez votre enseigne personnalisée en minutes",
+    "steps": {
+      "model": "1. Sélectionner le modèle",
+      "size": "2. Définir les dimensions",
+      "color": "3. Choisir la couleur",
+      "material": "4. Sélection du matériau",
+      "text": "5. Ajouter du texte",
+      "extras": "6. Extras"
+    },
+    "size": {
+      "width": "Largeur",
+      "height": "Hauteur",
+      "custom": "Taille personnalisée",
+      "preset": "Tailles standard"
+    },
+    "text": {
+      "title": "Ajouter du texte",
+      "placeholder": "Texte de votre enseigne",
+      "font": "Police",
+      "fontSize": "Taille de police",
+      "alignment": "Alignement",
+      "effect": "Effet de texte",
+      "none": "Aucun",
+      "bold": "Gras",
+      "italic": "Italique",
+      "shadow": "Ombre",
+      "glow": "Lueur"
+    },
+    "material": {
+      "title": "Sélection du matériau",
+      "pvc": "Mousse PVC",
+      "aluminum": "Composite aluminium",
+      "acrylic": "Acrylique",
+      "wood": "Bois",
+      "metal": "Métal"
+    },
+    "lighting": {
+      "title": "Options d'éclairage",
+      "none": "Sans éclairage",
+      "front": "Éclairage frontal",
+      "back": "Rétroéclairage (Halo)",
+      "edge": "Éclairage de bord",
+      "neon": "Effet néon"
+    },
+    "summary": {
+      "title": "Résumé",
+      "model": "Modèle",
+      "size": "Dimensions",
+      "material": "Matériau",
+      "color": "Couleur",
+      "lighting": "Éclairage",
+      "text": "Texte",
+      "extras": "Extras",
+      "total": "Total",
+      "addToCart": "Ajouter au panier"
+    }
+  },
+  "cart": {
+    "title": "Panier",
+    "empty": "Votre panier est vide",
+    "emptyDesc": "Commencez à ajouter des produits pour créer votre commande",
+    "continueShopping": "Continuer les achats",
+    "items": "articles",
+    "item": "article",
+    "quantity": "Quantité",
+    "price": "Prix",
+    "total": "Total",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "shippingFree": "GRATUIT",
+    "shippingInfo": "Livraison gratuite dès 500 €",
+    "discount": "Remise",
+    "coupon": "Code promo",
+    "couponPlaceholder": "Entrez le code",
+    "apply": "Appliquer",
+    "remove": "Retirer",
+    "couponApplied": "Code promo appliqué avec succès !",
+    "invalidCoupon": "Code promo invalide",
+    "checkout": "Passer la commande",
+    "estimatedDelivery": "Livraison estimée",
+    "securePayment": "Paiement sécurisé",
+    "vatIncluded": "TVA incluse"
+  },
+  "checkout": {
+    "title": "Commande",
+    "steps": {
+      "information": "Informations",
+      "shipping": "Livraison",
+      "payment": "Paiement",
+      "review": "Révision"
+    },
+    "contact": {
+      "title": "Informations de contact",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "subscribe": "M'envoyer les actualités et offres"
+    },
+    "shipping": {
+      "title": "Adresse de livraison",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "company": "Entreprise (Optionnel)",
+      "address": "Adresse",
+      "apartment": "Appartement, suite, etc. (Optionnel)",
+      "city": "Ville",
+      "postalCode": "Code postal",
+      "country": "Pays",
+      "phone": "Téléphone"
+    },
+    "shippingMethod": {
+      "title": "Mode de livraison",
+      "standard": "Livraison standard",
+      "express": "Livraison express",
+      "pickup": "Retrait en magasin"
+    },
+    "payment": {
+      "title": "Paiement",
+      "method": "Mode de paiement",
+      "card": "Carte de crédit/débit",
+      "paypal": "PayPal",
+      "bankTransfer": "Virement bancaire",
+      "cashOnDelivery": "Paiement à la livraison",
+      "cardNumber": "Numéro de carte",
+      "cardHolder": "Nom du titulaire",
+      "expiry": "Date d'expiration",
+      "cvv": "CVV",
+      "secureInfo": "Vos informations de paiement sont sécurisées et cryptées"
+    },
+    "summary": {
+      "title": "Récapitulatif",
+      "edit": "Modifier",
+      "placeOrder": "Passer la commande",
+      "agreeTerms": "J'accepte les Conditions d'utilisation et la Politique de confidentialité"
+    }
+  },
+  "order": {
+    "title": "Détails de la commande",
+    "number": "Numéro de commande",
+    "date": "Date de commande",
+    "status": "Statut",
+    "statuses": {
+      "pending": "En attente",
+      "processing": "En traitement",
+      "shipped": "Expédiée",
+      "delivered": "Livrée",
+      "cancelled": "Annulée",
+      "refunded": "Remboursée"
+    },
+    "tracking": "Numéro de suivi",
+    "items": "Articles commandés",
+    "shipping": "Adresse de livraison",
+    "payment": "Mode de paiement",
+    "timeline": "Historique de la commande",
+    "reorder": "Commander à nouveau",
+    "invoice": "Télécharger la facture",
+    "support": "Contacter le support"
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Connectez-vous pour accéder à votre compte",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "remember": "Se souvenir de moi",
+      "forgot": "Mot de passe oublié ?",
+      "button": "Se connecter",
+      "noAccount": "Pas de compte ?",
+      "register": "S'inscrire"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous pour commencer vos achats",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse e-mail",
+      "phone": "Numéro de téléphone",
+      "password": "Mot de passe",
+      "passwordConfirm": "Confirmer le mot de passe",
+      "agree": "J'accepte les Conditions d'utilisation et la Politique de confidentialité",
+      "button": "Créer un compte",
+      "haveAccount": "Déjà un compte ?",
+      "login": "Se connecter"
+    },
+    "forgot": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Entrez votre e-mail pour réinitialiser votre mot de passe",
+      "email": "Adresse e-mail",
+      "button": "Envoyer le lien",
+      "backToLogin": "Retour à la connexion"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "À propos",
+      "description": "Nous proposons des solutions innovantes en signalétique et impression numérique. Nous ajoutons de la valeur à votre marque avec des designs professionnels et une livraison rapide."
+    },
+    "quickLinks": {
+      "title": "Liens rapides"
+    },
+    "services": {
+      "title": "Services"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Adresse",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "hours": "Heures d'ouverture"
+    },
+    "newsletter": {
+      "title": "S'abonner à la newsletter",
+      "subtitle": "Soyez le premier informé des nouveaux produits et offres",
+      "placeholder": "Entrez votre e-mail",
+      "button": "S'abonner"
+    },
+    "social": {
+      "title": "Suivez-nous"
+    },
+    "bottom": {
+      "rights": "Tous droits réservés.",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "cookies": "Politique des cookies"
+    }
+  },
+  "errors": {
+    "generic": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "notFound": "Page non trouvée",
+    "unauthorized": "Accès non autorisé",
+    "validation": "Veuillez vérifier vos informations",
+    "network": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "server": "Erreur serveur. Veuillez réessayer plus tard.",
+    "required": "Ce champ est requis",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "minLength": "Doit contenir au moins {{count}} caractères",
+    "maxLength": "Doit contenir au maximum {{count}} caractères",
+    "fileTooLarge": "La taille du fichier doit être inférieure à {{size}}Mo",
+    "invalidFileType": "Type de fichier invalide. Autorisé : {{types}}"
+  }
+}

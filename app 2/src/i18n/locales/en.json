@@ -1,0 +1,211 @@
+{
+  "common": {
+    "brandName": "CVKDijital",
+    "tagline": "CUSTOM PACKAGING SOLUTIONS",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close",
+    "open": "Open",
+    "view": "View",
+    "download": "Download",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "nav": {
+    "home": "Home",
+    "shop": "Products",
+    "blog": "Blog",
+    "contact": "Contact",
+    "cart": "My Cart",
+    "profile": "My Profile",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "resources": "Resources",
+    "pricingCalculator": "Pricing Calculator",
+    "howItWorks": "How to Order",
+    "designHelp": "Design Help",
+    "freeSample": "FREE Sample",
+    "orderTracking": "Order Tracking"
+  },
+  "home": {
+    "hero": {
+      "title": "Design Your\nPackaging",
+      "subtitle": "Custom packaging solutions",
+      "description": "No minimum order quantity, 24-hour delivery. Custom packaging for your brand.",
+      "ctaPrimary": "Get Started",
+      "ctaSecondary": "Learn More"
+    },
+    "features": {
+      "onlineOrder": {
+        "title": "Online Ordering",
+        "description": "Easy online ordering system"
+      },
+      "noMinimum": {
+        "title": "No Minimum Order",
+        "description": "Flexible order quantities"
+      },
+      "digitalPrint": {
+        "title": "Digital Printing",
+        "description": "High-quality digital printing"
+      },
+      "fastDelivery": {
+        "title": "Fastest Delivery",
+        "description": "24-hour delivery"
+      }
+    },
+    "products": {
+      "title": "Our Products",
+      "subtitle": "Packaging solutions for your needs",
+      "standUpPouch": {
+        "name": "Stand-Up Pouch",
+        "description": "Most popular packaging solution"
+      },
+      "flatPouch": {
+        "name": "Flat Pouch",
+        "description": "Classic flat pouch design"
+      },
+      "rollFilm": {
+        "name": "Roll Film",
+        "description": "For automatic packaging"
+      }
+    },
+    "testimonials": {
+      "title": "Customer Reviews",
+      "subtitle": "From those who chose us"
+    },
+    "cta": {
+      "title": "Get Started Now",
+      "description": "Design your custom packaging",
+      "button": "Order Now"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "registerNow": "Register now"
+    },
+    "register": {
+      "title": "Register",
+      "subtitle": "Create a new account",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "phone": "Phone",
+      "company": "Company",
+      "hasAccount": "Already have an account?",
+      "loginNow": "Login now"
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email address",
+      "description": "A password reset link will be sent",
+      "send": "Send",
+      "backToLogin": "Back to login"
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "continueShopping": "Continue Shopping",
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "vat": "VAT (%22)",
+    "total": "Total",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "quantity": "Quantity",
+    "note": "Add note"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "steps": {
+      "shipping": "Shipping",
+      "payment": "Payment",
+      "confirmation": "Confirmation"
+    },
+    "shipping": {
+      "title": "Shipping Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "sameAsBilling": "Same as billing address"
+    },
+    "payment": {
+      "title": "Payment Method",
+      "creditCard": "Credit Card",
+      "bankTransfer": "Bank Transfer",
+      "paypal": "PayPal"
+    },
+    "placeOrder": "Place Order",
+    "orderSuccess": "Your order has been received!"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Insights from the packaging world",
+    "searchPlaceholder": "Search articles...",
+    "categories": "Categories",
+    "all": "All",
+    "readMore": "Read More",
+    "readTime": "min read",
+    "author": "Author",
+    "date": "Date",
+    "tags": "Tags",
+    "relatedPosts": "Related Articles",
+    "comments": "Comments",
+    "leaveComment": "Leave a Comment",
+    "newsletter": {
+      "title": "Don't Miss Our Blog Posts",
+      "description": "Subscribe to our newsletter to stay updated with new articles",
+      "placeholder": "Your email address",
+      "subscribe": "Subscribe"
+    }
+  },
+  "footer": {
+    "description": "24-hour delivery and freedom to create anytime with no minimum order quantity.",
+    "markets": "Markets",
+    "products": "Products",
+    "services": "Services",
+    "support": "Account & Support",
+    "social": "Follow Us",
+    "copyright": "© 2024 CVKDijital. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "cookiePolicy": "Cookie Policy"
+  },
+  "language": {
+    "tr": "Türkçe",
+    "en": "English",
+    "switch": "Change Language"
+  }
+}

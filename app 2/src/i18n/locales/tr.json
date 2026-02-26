@@ -1,0 +1,211 @@
+{
+  "common": {
+    "brandName": "CVKDijital",
+    "tagline": "ÖZEL AMBALAJ ÇÖZÜMLERİ",
+    "loading": "Yükleniyor...",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "create": "Oluştur",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "next": "Sonraki",
+    "previous": "Önceki",
+    "submit": "Gönder",
+    "close": "Kapat",
+    "open": "Aç",
+    "view": "Görüntüle",
+    "download": "İndir",
+    "share": "Paylaş",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı!",
+    "success": "Başarılı",
+    "error": "Hata",
+    "warning": "Uyarı",
+    "info": "Bilgi",
+    "required": "Zorunlu",
+    "optional": "İsteğe Bağlı"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "shop": "Ürünler",
+    "blog": "Blog",
+    "contact": "İletişim",
+    "cart": "Sepetim",
+    "profile": "Profilim",
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "register": "Kayıt Ol",
+    "resources": "Kaynaklar",
+    "pricingCalculator": "Fiyat Hesaplayıcı",
+    "howItWorks": "Nasıl Sipariş Verilir",
+    "designHelp": "Tasarım Yardımı",
+    "freeSample": "ÜCRETSİZ Numune",
+    "orderTracking": "Sipariş Takibi"
+  },
+  "home": {
+    "hero": {
+      "title": "Ambalajınızı\nTasarlayın",
+      "subtitle": "Özel ambalaj çözümleri",
+      "description": "Minimum sipariş limiti olmadan, 24 saatte teslimat. Markanıza özel ambalajlar.",
+      "ctaPrimary": "Hemen Başla",
+      "ctaSecondary": "Daha Fazla Bilgi"
+    },
+    "features": {
+      "onlineOrder": {
+        "title": "Online Sipariş",
+        "description": "Kolay online sipariş sistemi"
+      },
+      "noMinimum": {
+        "title": "Minimum Sipariş Yok",
+        "description": "Esnek sipariş miktarları"
+      },
+      "digitalPrint": {
+        "title": "Dijital Baskı",
+        "description": "Yüksek kaliteli dijital baskı"
+      },
+      "fastDelivery": {
+        "title": "En Hızlı Teslimat",
+        "description": "24 saatte teslimat"
+      }
+    },
+    "products": {
+      "title": "Ürünlerimiz",
+      "subtitle": "İhtiyacınıza uygun ambalaj çözümleri",
+      "standUpPouch": {
+        "name": "Stand-Up Poşet",
+        "description": "En popüler ambalaj çözümü"
+      },
+      "flatPouch": {
+        "name": "Yatay Poşet",
+        "description": "Klasik düz poşet tasarımı"
+      },
+      "rollFilm": {
+        "name": "Rulo Film",
+        "description": "Otomatik paketleme için"
+      }
+    },
+    "testimonials": {
+      "title": "Müşteri Yorumları",
+      "subtitle": "Bizi tercih edenlerden"
+    },
+    "cta": {
+      "title": "Hemen Başlayın",
+      "description": "Özel ambalajınızı tasarlayın",
+      "button": "Şimdi Sipariş Ver"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Giriş Yap",
+      "subtitle": "Hesabınıza giriş yapın",
+      "email": "E-posta",
+      "password": "Şifre",
+      "rememberMe": "Beni hatırla",
+      "forgotPassword": "Şifremi unuttum",
+      "noAccount": "Hesabınız yok mu?",
+      "registerNow": "Hemen kaydolun"
+    },
+    "register": {
+      "title": "Kayıt Ol",
+      "subtitle": "Yeni hesap oluşturun",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "email": "E-posta",
+      "password": "Şifre",
+      "confirmPassword": "Şifre Tekrar",
+      "phone": "Telefon",
+      "company": "Şirket",
+      "hasAccount": "Zaten hesabınız var mı?",
+      "loginNow": "Giriş yapın"
+    },
+    "forgotPassword": {
+      "title": "Şifre Sıfırlama",
+      "subtitle": "E-posta adresinizi girin",
+      "description": "Şifre sıfırlama bağlantısı gönderilecektir",
+      "send": "Gönder",
+      "backToLogin": "Giriş sayfasına dön"
+    }
+  },
+  "cart": {
+    "title": "Alışveriş Sepeti",
+    "empty": "Sepetiniz boş",
+    "continueShopping": "Alışverişe Devam Et",
+    "summary": "Sipariş Özeti",
+    "subtotal": "Ara Toplam",
+    "shipping": "Kargo",
+    "vat": "KDV (%22)",
+    "total": "Toplam",
+    "checkout": "Ödeme Yap",
+    "remove": "Kaldır",
+    "quantity": "Adet",
+    "note": "Not ekle"
+  },
+  "checkout": {
+    "title": "Ödeme",
+    "steps": {
+      "shipping": "Teslimat",
+      "payment": "Ödeme",
+      "confirmation": "Onay"
+    },
+    "shipping": {
+      "title": "Teslimat Bilgileri",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "address": "Adres",
+      "city": "Şehir",
+      "postalCode": "Posta Kodu",
+      "country": "Ülke",
+      "sameAsBilling": "Fatura adresim aynı"
+    },
+    "payment": {
+      "title": "Ödeme Yöntemi",
+      "creditCard": "Kredi Kartı",
+      "bankTransfer": "Havale/EFT",
+      "paypal": "PayPal"
+    },
+    "placeOrder": "Sipariş Ver",
+    "orderSuccess": "Siparişiniz alındı!"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Ambalaj dünyasından içgörüler",
+    "searchPlaceholder": "Makale ara...",
+    "categories": "Kategoriler",
+    "all": "Tümü",
+    "readMore": "Devamını Oku",
+    "readTime": "dk okuma",
+    "author": "Yazar",
+    "date": "Tarih",
+    "tags": "Etiketler",
+    "relatedPosts": "Benzer Yazılar",
+    "comments": "Yorumlar",
+    "leaveComment": "Yorum Yaz",
+    "newsletter": {
+      "title": "Blog Yazılarımızı Kaçırmayın",
+      "description": "Yeni makalelerden haberdar olmak için bültenimize abone olun",
+      "placeholder": "E-posta adresiniz",
+      "subscribe": "Abone Ol"
+    }
+  },
+  "footer": {
+    "description": "24 saatte teslimat ve minimum sipariş miktarı olmadan istediğiniz zaman oluşturma özgürlüğü.",
+    "markets": "Sektörler",
+    "products": "Ürünler",
+    "services": "Hizmetler",
+    "support": "Hesap & Destek",
+    "social": "Bizi Takip Edin",
+    "copyright": "© 2024 CVKDijital. Tüm hakları saklıdır.",
+    "privacyPolicy": "Gizlilik Politikası",
+    "cookiePolicy": "Çerez Politikası"
+  },
+  "language": {
+    "tr": "Türkçe",
+    "en": "English",
+    "switch": "Dil Değiştir"
+  }
+}

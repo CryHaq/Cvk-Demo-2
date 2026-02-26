@@ -1,0 +1,89 @@
+# CVK Dijital - Production .htaccess (cPanel + SPA + optional WordPress)
+
+Options -Indexes
+ServerSignature Off
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Keep Authorization header for PHP APIs
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Block hidden files except .well-known (SSL challenges)
+    RewriteRule "(^|/)\.(?!well-known/)" - [F,L]
+
+    # ---- WordPress core pass-through (if installed in root) ----
+    RewriteRule ^wp-admin/ - [L]
+    RewriteRule ^wp-content/ - [L]
+    RewriteRule ^wp-includes/ - [L]
+    RewriteRule ^wp-json/ - [L]
+    RewriteRule ^wp-login\.php$ - [L]
+    RewriteRule ^wp-cron\.php$ - [L]
+    RewriteRule ^wp-comments-post\.php$ - [L]
+    RewriteRule ^xmlrpc\.php$ - [L]
+    RewriteRule ^index\.php$ - [L]
+
+    # Optional: route common WP content paths to WordPress front controller.
+    # Use this when WordPress content is served under /blog etc.
+    RewriteCond %{REQUEST_URI} ^/(blog|category|tag|author|feed|sitemap).* [NC]
+    RewriteCond %{DOCUMENT_ROOT}/index.php -f
+    RewriteRule ^ index.php [L]
+
+    # API and backend files must never be handled by SPA fallback
+    RewriteRule ^(api|php|config|middleware|utils)(/.*)?$ - [L]
+
+    # Don't rewrite real files or directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # SPA fallback
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 5 minutes"
+    ExpiresByType application/json "access plus 0 seconds"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Immutable cache for Vite hashed assets
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|woff2|png|jpg|jpeg|gif|svg|webp)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Security headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # Enable HSTS only on HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+</IfModule>
+
+# PHP limits for cPanel shared hosting
+<IfModule mod_php.c>
+    php_value upload_max_filesize 64M
+    php_value post_max_size 64M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>

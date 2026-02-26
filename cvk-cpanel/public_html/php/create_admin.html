@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Oluştur - CVK Dijital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0077be 0%, #00a8e8 100%);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        p {
+            color: #666;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0077be;
+        }
+        .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0077be 0%, #00a8e8 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px #0077be;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .divider {
+            margin: 32px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+        .sql-section h2 {
+            font-size: 18px;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+        .sql-code {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .copy-btn {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: #374151;
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">CVK</div>
+            <h1>Admin Oluştur</h1>
+            <p>CVK Dijital Admin Panel için yönetici hesabı oluşturun</p>
+        </div>
+
+        <div id="alert" class="alert hidden"></div>
+
+        <form id="adminForm">
+            <div class="form-group">
+                <label for="email">E-posta *</label>
+                <input type="email" id="email" required placeholder="admin@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="firstName">Ad *</label>
+                <input type="text" id="firstName" required placeholder="Ahmet">
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Soyad *</label>
+                <input type="text" id="lastName" required placeholder="Yılmaz">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Şifre *</label>
+                <input type="password" id="password" required placeholder="********" minlength="8">
+                <p class="hint">En az 8 karakter</p>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Telefon</label>
+                <input type="tel" id="phone" placeholder="+90 555 123 4567">
+            </div>
+
+            <div class="form-group">
+                <label for="adminSecret">Admin Secret Key *</label>
+                <input type="password" id="adminSecret" required placeholder="Güvenlik anahtarı">
+                <p class="hint">Varsayılan: cvk-admin-2024-secret</p>
+            </div>
+
+            <button type="submit" id="submitBtn">Admin Oluştur</button>
+        </form>
+
+        <div class="divider"></div>
+
+        <div class="sql-section">
+            <h2>🔧 Alternatif: SQL ile Admin Oluştur</h2>
+            <p style="margin-bottom: 12px; color: #666;">phpMyAdmin veya MySQL konsolunda çalıştırın:</p>
+            <div class="sql-code" id="sqlCode">-- Önce şifreyi hashleyin (PHP ile)
+-- Aşağıdaki PHP kodunu çalıştırın:
+&lt;?php echo password_hash('sifreniz', PASSWORD_BCRYPT); ?&gt;
+
+-- Sonra SQL ile ekleyin:
+INSERT INTO users (email, password_hash, first_name, last_name, phone, company, role, is_active) 
+VALUES (
+    'admin@cvkdijital.com',
+    '$2y$10$...', -- hashlenmiş şifre
+    'Admin',
+    'Kullanıcı',
+    '+90 555 123 4567',
+    'CVK Ambalaj',
+    'admin',
+    1
+);</div>
+            <button class="copy-btn" onclick="copySQL()">SQL'i Kopyala</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('adminForm');
+        const alert = document.getElementById('alert');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function showAlert(message, type) {
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.classList.remove('hidden');
+        }
+
+        function hideAlert() {
+            alert.classList.add('hidden');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Oluşturuluyor...';
+
+            const data = {
+                action: 'create_admin',
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                phone: document.getElementById('phone').value,
+                admin_secret: document.getElementById('adminSecret').value
+            };
+
+            try {
+                const response = await fetch('auth.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(`✅ Admin kullanıcısı başarıyla oluşturuldu!\n\nE-posta: ${result.user.email}\nRol: ${result.user.role}`, 'success');
+                    form.reset();
+                } else {
+                    showAlert(`❌ Hata: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`❌ Bağlantı hatası: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Admin Oluştur';
+            }
+        });
+
+        function copySQL() {
+            const sqlCode = document.getElementById('sqlCode').textContent;
+            navigator.clipboard.writeText(sqlCode).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Kopyalandı!';
+                setTimeout(() => btn.textContent = "SQL'i Kopyala", 2000);
+            });
+        }
+    </script>
+</body>
+</html>

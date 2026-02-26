@@ -1,0 +1,16 @@
+{
+    "name": "cvkdijital/ecommerce-api",
+    "description": "CVK Dijital E-Ticaret API",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "iyzico/iyzipay-php": "^2.0",
+        "firebase/php-jwt": "^6.0",
+        "phpmailer/phpmailer": "^6.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "CVKDijital\\": "src/"
+        }
+    }
+}

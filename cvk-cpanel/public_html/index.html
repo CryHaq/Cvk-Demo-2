@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="theme-color" content="#0077be" />
+    <meta name="msapplication-TileColor" content="#0077be" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="CVK Dijital" />
+    <meta name="application-name" content="CVK Dijital" />
+    <meta name="description" content="Özelleştirilmiş esnek ambalaj çözümleri - Doypack poşet, rulo film ve daha fazlası" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+    <link rel="shortcut icon" href="/icons/favicon.ico" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-icon-180x180.png" />
+    
+    <!-- Android Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/android-icon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="144x144" href="/icons/android-icon-144x144.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <title>CVK Dijital - Özel Ambalaj Çözümleri</title>
+    
+    <!-- Critical CSS inline for faster First Paint -->
+    <style>
+      /* Critical CSS */
+      html { scroll-behavior: smooth; }
+      body { 
+        margin: 0; 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      #root { min-height: 100vh; }
+      
+      /* Skeleton Loading */
+      .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+      @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+      
+      /* Offline indicator */
+      .offline-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #ff9800;
+        color: white;
+        text-align: center;
+        padding: 8px;
+        font-size: 14px;
+        z-index: 9999;
+        transform: translateY(-100%);
+        transition: transform 0.3s ease;
+      }
+      .offline-indicator.show {
+        transform: translateY(0);
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-DIOd0qzp.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D8ONQDAT.css">
+  </head>
+  <body>
+    <!-- Offline Indicator -->
+    <div id="offline-indicator" class="offline-indicator">
+      ⚠️ Bağlantı yok. Çevrimdışı moddasınız.
+    </div>
+    
+    <div id="root">
+      <!-- Initial Loading State -->
+      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f0f7fc;">
+        <div style="text-align: center;">
+          <div style="width: 60px; height: 60px; border: 4px solid #e0e0e0; border-top-color: #0077be; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+          <p style="color: #666; font-size: 16px;">CVK Dijital yükleniyor...</p>
+        </div>
+      </div>
+    </div>
+    
+    
+    <!-- No Script Fallback -->
+    <noscript>
+      <div style="padding: 20px; text-align: center; background: #f0f7fc; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div>
+          <h1 style="color: #0077be; margin-bottom: 10px;">JavaScript Gerekli</h1>
+          <p style="color: #666;">CVK Dijital'i kullanmak için lütfen JavaScript'i etkinleştirin.</p>
+        </div>
+      </div>
+    </noscript>
+    
+    <style>
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <script>
+      // Offline indicator
+      (function() {
+        var indicator = document.getElementById('offline-indicator');
+        
+        function updateOnlineStatus() {
+          if (!navigator.onLine) {
+            indicator.classList.add('show');
+          } else {
+            indicator.classList.remove('show');
+          }
+        }
+        
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+      })();
+    </script>
+  </body>
+</html>

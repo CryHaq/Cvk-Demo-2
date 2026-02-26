@@ -1,0 +1,372 @@
+{
+  "common": {
+    "appName": "CVK Digital",
+    "tagline": "Beschilderung & Digitaldruck-Lösungen",
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "retry": "Erneut versuchen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "remove": "Entfernen",
+    "search": "Suchen",
+    "filter": "Filter",
+    "sort": "Sortieren",
+    "view": "Ansehen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "continue": "Fortfahren",
+    "submit": "Absenden",
+    "success": "Erfolg",
+    "warning": "Warnung",
+    "info": "Info",
+    "yes": "Ja",
+    "no": "Nein",
+    "or": "oder",
+    "and": "und",
+    "from": "ab",
+    "to": "bis",
+    "all": "Alle",
+    "none": "Keine",
+    "select": "Auswählen",
+    "selected": "Ausgewählt",
+    "optional": "Optional",
+    "required": "Erforderlich",
+    "perPiece": "pro Stück",
+    "free": "KOSTENLOS",
+    "new": "NEU",
+    "popular": "BELIEBT",
+    "sale": "ANGEBOT",
+    "bestseller": "BESTSELLER",
+    "customize": "Anpassen",
+    "configure": "Konfigurieren",
+    "calculate": "Preis berechnen",
+    "addToCart": "In den Warenkorb",
+    "addToWishlist": "Zur Wunschliste",
+    "removeFromWishlist": "Von Wunschliste entfernen",
+    "compare": "Vergleichen",
+    "share": "Teilen",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "readMore": "Weiterlesen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen",
+    "viewAll": "Alle ansehen",
+    "seeDetails": "Details ansehen",
+    "contactUs": "Kontaktieren Sie uns",
+    "getOffer": "Angebot anfordern",
+    "callNow": "Jetzt anrufen",
+    "sendMessage": "Nachricht senden"
+  },
+  "nav": {
+    "home": "Startseite",
+    "shop": "Shop",
+    "products": "Produkte",
+    "services": "Dienstleistungen",
+    "portfolio": "Portfolio",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "support": "Support",
+    "cart": "Warenkorb",
+    "wishlist": "Wunschliste",
+    "account": "Mein Konto",
+    "orders": "Meine Bestellungen",
+    "admin": "Admin-Bereich",
+    "logout": "Abmelden",
+    "login": "Anmelden",
+    "register": "Registrieren"
+  },
+  "hero": {
+    "title": "Innovative Lösungen für Beschilderung und Digitaldruck",
+    "subtitle": "Erstellen Sie Ihr Traumschild in Minuten mit unserem 3D-Konfigurator. Professionelle Ergebnisse, super schnelle Lieferung.",
+    "ctaPrimary": "Jetzt gestalten",
+    "ctaSecondary": "Produkte entdecken",
+    "badge": "50.000+ Projekte abgeschlossen",
+    "features": {
+      "freeDesign": "Kostenlose Gestaltung",
+      "fastDelivery": "Schnelle Lieferung",
+      "installment": "Ratenzahlung",
+      "warranty": "2 Jahre Garantie"
+    }
+  },
+  "categories": {
+    "title": "Produktkategorien",
+    "subtitle": "Entdecken Sie unsere Produkte für jeden Bedarf",
+    "all": "Alle Kategorien",
+    "indoor": "Innenbereich",
+    "outdoor": "Außenbereich",
+    "event": "Event & Organisation",
+    "stand": "Messestand",
+    "retail": "Einzelhandel & Laden",
+    "corporate": "Corporate Identity",
+    "led": "LED-Displays"
+  },
+  "products": {
+    "title": "Unsere Produkte",
+    "subtitle": "Hochwertige Beschilderung und Digitaldruck-Produkte",
+    "noProducts": "Keine Produkte gefunden",
+    "noProductsDesc": "Versuchen Sie, Ihre Filter oder Suchbegriffe zu ändern",
+    "specs": "Technische Spezifikationen",
+    "features": "Merkmale",
+    "usageAreas": "Einsatzbereiche",
+    "dimensions": "Abmessungen",
+    "material": "Material",
+    "color": "Farbe",
+    "colors": "Farben",
+    "customize": "Anpassen",
+    "inStock": "Auf Lager",
+    "outOfStock": "Nicht auf Lager",
+    "estimatedDelivery": "Geschätzte Lieferung",
+    "minOrder": "Mindestbestellung",
+    "pricePerPiece": "Preis pro Stück"
+  },
+  "configurator": {
+    "title": "3D-Konfigurator",
+    "subtitle": "Erstellen Sie Ihr individuelles Schild in Minuten",
+    "steps": {
+      "model": "1. Modell wählen",
+      "size": "2. Abmessungen festlegen",
+      "color": "3. Farbe wählen",
+      "material": "4. Materialauswahl",
+      "text": "5. Text hinzufügen",
+      "extras": "6. Extras"
+    },
+    "size": {
+      "width": "Breite",
+      "height": "Höhe",
+      "custom": "Benutzerdefinierte Größe",
+      "preset": "Standardgrößen"
+    },
+    "text": {
+      "title": "Text hinzufügen",
+      "placeholder": "Ihr Schildtext",
+      "font": "Schriftart",
+      "fontSize": "Schriftgröße",
+      "alignment": "Ausrichtung",
+      "effect": "Texteffekt",
+      "none": "Keine",
+      "bold": "Fett",
+      "italic": "Kursiv",
+      "shadow": "Schatten",
+      "glow": "Leuchten"
+    },
+    "material": {
+      "title": "Materialauswahl",
+      "pvc": "PVC-Schaum",
+      "aluminum": "Aluminium-Verbund",
+      "acrylic": "Acryl",
+      "wood": "Holz",
+      "metal": "Metall"
+    },
+    "lighting": {
+      "title": "Beleuchtungsoptionen",
+      "none": "Keine Beleuchtung",
+      "front": "Frontbeleuchtung",
+      "back": "Hinterleuchtung (Halo)",
+      "edge": "Kantenbeleuchtung",
+      "neon": "Neon-Effekt"
+    },
+    "summary": {
+      "title": "Zusammenfassung",
+      "model": "Modell",
+      "size": "Abmessungen",
+      "material": "Material",
+      "color": "Farbe",
+      "lighting": "Beleuchtung",
+      "text": "Text",
+      "extras": "Extras",
+      "total": "Gesamt",
+      "addToCart": "In den Warenkorb"
+    }
+  },
+  "cart": {
+    "title": "Warenkorb",
+    "empty": "Ihr Warenkorb ist leer",
+    "emptyDesc": "Fügen Sie Produkte hinzu, um Ihre Bestellung zu erstellen",
+    "continueShopping": "Weiter einkaufen",
+    "items": "Artikel",
+    "item": "Artikel",
+    "quantity": "Menge",
+    "price": "Preis",
+    "total": "Gesamt",
+    "subtotal": "Zwischensumme",
+    "shipping": "Versand",
+    "shippingFree": "KOSTENLOS",
+    "shippingInfo": "Kostenloser Versand ab €500",
+    "discount": "Rabatt",
+    "coupon": "Gutscheincode",
+    "couponPlaceholder": "Code eingeben",
+    "apply": "Anwenden",
+    "remove": "Entfernen",
+    "couponApplied": "Gutschein erfolgreich angewendet!",
+    "invalidCoupon": "Ungültiger Gutscheincode",
+    "checkout": "Zur Kasse",
+    "estimatedDelivery": "Geschätzte Lieferung",
+    "securePayment": "Sichere Zahlung",
+    "vatIncluded": "MwSt. inklusive"
+  },
+  "checkout": {
+    "title": "Kasse",
+    "steps": {
+      "information": "Information",
+      "shipping": "Versand",
+      "payment": "Zahlung",
+      "review": "Überprüfung"
+    },
+    "contact": {
+      "title": "Kontaktinformationen",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "subscribe": "Senden Sie mir Neuigkeiten und Angebote"
+    },
+    "shipping": {
+      "title": "Lieferadresse",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "company": "Firma (Optional)",
+      "address": "Adresse",
+      "apartment": "Wohnung, Suite usw. (Optional)",
+      "city": "Stadt",
+      "postalCode": "Postleitzahl",
+      "country": "Land",
+      "phone": "Telefon"
+    },
+    "shippingMethod": {
+      "title": "Versandart",
+      "standard": "Standardversand",
+      "express": "Expressversand",
+      "pickup": "Abholung im Geschäft"
+    },
+    "payment": {
+      "title": "Zahlung",
+      "method": "Zahlungsmethode",
+      "card": "Kredit-/Debitkarte",
+      "paypal": "PayPal",
+      "bankTransfer": "Banküberweisung",
+      "cashOnDelivery": "Nachnahme",
+      "cardNumber": "Kartennummer",
+      "cardHolder": "Karteninhaber",
+      "expiry": "Ablaufdatum",
+      "cvv": "CVV",
+      "secureInfo": "Ihre Zahlungsinformationen sind sicher und verschlüsselt"
+    },
+    "summary": {
+      "title": "Bestellübersicht",
+      "edit": "Bearbeiten",
+      "placeOrder": "Bestellung aufgeben",
+      "agreeTerms": "Ich stimme den AGB und Datenschutzbestimmungen zu"
+    }
+  },
+  "order": {
+    "title": "Bestelldetails",
+    "number": "Bestellnummer",
+    "date": "Bestelldatum",
+    "status": "Status",
+    "statuses": {
+      "pending": "Ausstehend",
+      "processing": "In Bearbeitung",
+      "shipped": "Versendet",
+      "delivered": "Geliefert",
+      "cancelled": "Storniert",
+      "refunded": "Erstattet"
+    },
+    "tracking": "Sendungsnummer",
+    "items": "Bestellte Artikel",
+    "shipping": "Lieferadresse",
+    "payment": "Zahlungsmethode",
+    "timeline": "Bestellverlauf",
+    "reorder": "Erneut bestellen",
+    "invoice": "Rechnung herunterladen",
+    "support": "Support kontaktieren"
+  },
+  "auth": {
+    "login": {
+      "title": "Anmelden",
+      "subtitle": "Melden Sie sich an, um auf Ihr Konto zuzugreifen",
+      "email": "E-Mail-Adresse",
+      "password": "Passwort",
+      "remember": "Angemeldet bleiben",
+      "forgot": "Passwort vergessen?",
+      "button": "Anmelden",
+      "noAccount": "Kein Konto?",
+      "register": "Registrieren"
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "subtitle": "Registrieren Sie sich, um einzukaufen",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "password": "Passwort",
+      "passwordConfirm": "Passwort bestätigen",
+      "agree": "Ich stimme den AGB und Datenschutzbestimmungen zu",
+      "button": "Konto erstellen",
+      "haveAccount": "Bereits ein Konto?",
+      "login": "Anmelden"
+    },
+    "forgot": {
+      "title": "Passwort zurücksetzen",
+      "subtitle": "Geben Sie Ihre E-Mail ein, um Ihr Passwort zurückzusetzen",
+      "email": "E-Mail-Adresse",
+      "button": "Reset-Link senden",
+      "backToLogin": "Zurück zur Anmeldung"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "Über uns",
+      "description": "Wir bieten innovative Lösungen für Beschilderung und Digitaldruck. Wir fügen Ihrer Marke mit professionellen Designs und schneller Lieferung Wert hinzu."
+    },
+    "quickLinks": {
+      "title": "Schnelllinks"
+    },
+    "services": {
+      "title": "Dienstleistungen"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "address": "Adresse",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "hours": "Öffnungszeiten"
+    },
+    "newsletter": {
+      "title": "Newsletter abonnieren",
+      "subtitle": "Seien Sie der Erste, der über neue Produkte und Aktionen erfährt",
+      "placeholder": "E-Mail eingeben",
+      "button": "Abonnieren"
+    },
+    "social": {
+      "title": "Folgen Sie uns"
+    },
+    "bottom": {
+      "rights": "Alle Rechte vorbehalten.",
+      "privacy": "Datenschutz",
+      "terms": "AGB",
+      "cookies": "Cookie-Richtlinie"
+    }
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "notFound": "Seite nicht gefunden",
+    "unauthorized": "Unbefugter Zugriff",
+    "validation": "Bitte überprüfen Sie Ihre Eingaben",
+    "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+    "server": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "required": "Dieses Feld ist erforderlich",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer ein",
+    "passwordMismatch": "Die Passwörter stimmen nicht überein",
+    "minLength": "Muss mindestens {{count}} Zeichen lang sein",
+    "maxLength": "Darf höchstens {{count}} Zeichen lang sein",
+    "fileTooLarge": "Dateigröße muss weniger als {{size}}MB betragen",
+    "invalidFileType": "Ungültiger Dateityp. Erlaubt: {{types}}"
+  }
+}

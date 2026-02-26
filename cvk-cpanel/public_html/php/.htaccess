@@ -1,0 +1,10 @@
+# Protect backend utility/sql docs from direct web access
+Options -Indexes
+
+<FilesMatch "\.(sql|md|log|ini|env)$">
+    Require all denied
+</FilesMatch>
+
+<Files "config.php">
+    Require all denied
+</Files>

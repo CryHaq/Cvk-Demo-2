@@ -1,0 +1,29 @@
+.DS_Store
+.vscode/
+
+# Node/Vite
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.cpanel.example
+
+# OS/Editor temp
+*.swp
+*.swo
+*~
+
+# Local artifact
+ziPnPndu

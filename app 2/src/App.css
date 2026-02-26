@@ -1,0 +1,101 @@
+/* App-specific styles */
+
+/* Page transition animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main > div {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Custom animation for floating elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gradient animation for CTA buttons */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Pulse ring animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 119, 190, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(0, 119, 190, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 119, 190, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Button hover transitions - Only transform and shadow */
+button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Link hover transitions */
+a {
+  transition: color 0.2s ease;
+}
+
+/* Image hover zoom effect for cards */
+.group:hover img {
+  transform: scale(1.02);
+}
+
+/* Glow effect for CTA buttons */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(0, 119, 190, 0.3);
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 30px rgba(0, 119, 190, 0.5);
+}
+
+/* Dark mode glow effect */
+.dark .glow-effect {
+  box-shadow: 0 0 20px rgba(0, 119, 190, 0.4);
+}
+
+.dark .glow-effect:hover {
+  box-shadow: 0 0 30px rgba(0, 119, 190, 0.6);
+}

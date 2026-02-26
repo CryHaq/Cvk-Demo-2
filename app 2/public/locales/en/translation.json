@@ -1,0 +1,372 @@
+{
+  "common": {
+    "appName": "CVK Digital",
+    "tagline": "Signage & Digital Printing Solutions",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try Again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "view": "View",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "continue": "Continue",
+    "submit": "Submit",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "from": "from",
+    "to": "to",
+    "all": "All",
+    "none": "None",
+    "select": "Select",
+    "selected": "Selected",
+    "optional": "Optional",
+    "required": "Required",
+    "perPiece": "per piece",
+    "free": "FREE",
+    "new": "NEW",
+    "popular": "POPULAR",
+    "sale": "SALE",
+    "bestseller": "BESTSELLER",
+    "customize": "Customize",
+    "configure": "Configure",
+    "calculate": "Calculate Price",
+    "addToCart": "Add to Cart",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "compare": "Compare",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "readMore": "Read More",
+    "showMore": "Show More",
+    "showLess": "Show Less",
+    "viewAll": "View All",
+    "seeDetails": "See Details",
+    "contactUs": "Contact Us",
+    "getOffer": "Get a Quote",
+    "callNow": "Call Now",
+    "sendMessage": "Send Message"
+  },
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "products": "Products",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "about": "About Us",
+    "contact": "Contact",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "support": "Support",
+    "cart": "Cart",
+    "wishlist": "Wishlist",
+    "account": "My Account",
+    "orders": "My Orders",
+    "admin": "Admin Panel",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "hero": {
+    "title": "Innovative Solutions in Signage and Digital Printing",
+    "subtitle": "Create your dream signage in minutes with our 3D configurator. Professional results, super fast delivery.",
+    "ctaPrimary": "Start Designing",
+    "ctaSecondary": "Explore Products",
+    "badge": "50,000+ Projects Completed",
+    "features": {
+      "freeDesign": "Free Design",
+      "fastDelivery": "Fast Delivery",
+      "installment": "Installment Options",
+      "warranty": "2 Year Warranty"
+    }
+  },
+  "categories": {
+    "title": "Product Categories",
+    "subtitle": "Discover our products for every need",
+    "all": "All Categories",
+    "indoor": "Indoor",
+    "outdoor": "Outdoor",
+    "event": "Event & Organization",
+    "stand": "Fair Stand",
+    "retail": "Retail & Store",
+    "corporate": "Corporate Identity",
+    "led": "LED Displays"
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "High-quality signage and digital printing products",
+    "noProducts": "No products found",
+    "noProductsDesc": "Try changing your filters or search terms",
+    "specs": "Technical Specifications",
+    "features": "Features",
+    "usageAreas": "Usage Areas",
+    "dimensions": "Dimensions",
+    "material": "Material",
+    "color": "Color",
+    "colors": "Colors",
+    "customize": "Customize",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "estimatedDelivery": "Estimated Delivery",
+    "minOrder": "Minimum Order",
+    "pricePerPiece": "Price per piece"
+  },
+  "configurator": {
+    "title": "3D Configurator",
+    "subtitle": "Create your custom signage in minutes",
+    "steps": {
+      "model": "1. Select Model",
+      "size": "2. Set Dimensions",
+      "color": "3. Choose Color",
+      "material": "4. Material Selection",
+      "text": "5. Add Text",
+      "extras": "6. Extras"
+    },
+    "size": {
+      "width": "Width",
+      "height": "Height",
+      "custom": "Custom Size",
+      "preset": "Standard Sizes"
+    },
+    "text": {
+      "title": "Add Text",
+      "placeholder": "Your signage text",
+      "font": "Font",
+      "fontSize": "Font Size",
+      "alignment": "Alignment",
+      "effect": "Text Effect",
+      "none": "None",
+      "bold": "Bold",
+      "italic": "Italic",
+      "shadow": "Shadow",
+      "glow": "Glow"
+    },
+    "material": {
+      "title": "Material Selection",
+      "pvc": "PVC Foam",
+      "aluminum": "Aluminum Composite",
+      "acrylic": "Acrylic",
+      "wood": "Wood",
+      "metal": "Metal"
+    },
+    "lighting": {
+      "title": "Lighting Options",
+      "none": "No Lighting",
+      "front": "Front Light",
+      "back": "Back Light (Halo)",
+      "edge": "Edge Light",
+      "neon": "Neon Effect"
+    },
+    "summary": {
+      "title": "Summary",
+      "model": "Model",
+      "size": "Dimensions",
+      "material": "Material",
+      "color": "Color",
+      "lighting": "Lighting",
+      "text": "Text",
+      "extras": "Extras",
+      "total": "Total",
+      "addToCart": "Add to Cart"
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "emptyDesc": "Start adding products to create your order",
+    "continueShopping": "Continue Shopping",
+    "items": "items",
+    "item": "item",
+    "quantity": "Quantity",
+    "price": "Price",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingFree": "FREE",
+    "shippingInfo": "Free shipping on orders over €500",
+    "discount": "Discount",
+    "coupon": "Coupon Code",
+    "couponPlaceholder": "Enter code",
+    "apply": "Apply",
+    "remove": "Remove",
+    "couponApplied": "Coupon applied successfully!",
+    "invalidCoupon": "Invalid coupon code",
+    "checkout": "Proceed to Checkout",
+    "estimatedDelivery": "Estimated Delivery",
+    "securePayment": "Secure Payment",
+    "vatIncluded": "VAT included"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "steps": {
+      "information": "Information",
+      "shipping": "Shipping",
+      "payment": "Payment",
+      "review": "Review"
+    },
+    "contact": {
+      "title": "Contact Information",
+      "email": "Email",
+      "phone": "Phone",
+      "subscribe": "Email me with news and offers"
+    },
+    "shipping": {
+      "title": "Shipping Address",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "company": "Company (Optional)",
+      "address": "Address",
+      "apartment": "Apartment, suite, etc. (Optional)",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "phone": "Phone"
+    },
+    "shippingMethod": {
+      "title": "Shipping Method",
+      "standard": "Standard Shipping",
+      "express": "Express Shipping",
+      "pickup": "Store Pickup"
+    },
+    "payment": {
+      "title": "Payment",
+      "method": "Payment Method",
+      "card": "Credit/Debit Card",
+      "paypal": "PayPal",
+      "bankTransfer": "Bank Transfer",
+      "cashOnDelivery": "Cash on Delivery",
+      "cardNumber": "Card Number",
+      "cardHolder": "Card Holder Name",
+      "expiry": "Expiry Date",
+      "cvv": "CVV",
+      "secureInfo": "Your payment information is secure and encrypted"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "edit": "Edit",
+      "placeOrder": "Place Order",
+      "agreeTerms": "I agree to the Terms of Service and Privacy Policy"
+    }
+  },
+  "order": {
+    "title": "Order Details",
+    "number": "Order Number",
+    "date": "Order Date",
+    "status": "Status",
+    "statuses": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "tracking": "Tracking Number",
+    "items": "Order Items",
+    "shipping": "Shipping Address",
+    "payment": "Payment Method",
+    "timeline": "Order Timeline",
+    "reorder": "Reorder",
+    "invoice": "Download Invoice",
+    "support": "Contact Support"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Sign in to access your account",
+      "email": "Email Address",
+      "password": "Password",
+      "remember": "Remember me",
+      "forgot": "Forgot password?",
+      "button": "Sign In",
+      "noAccount": "Don't have an account?",
+      "register": "Sign Up"
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Sign up to start shopping",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "password": "Password",
+      "passwordConfirm": "Confirm Password",
+      "agree": "I agree to the Terms of Service and Privacy Policy",
+      "button": "Create Account",
+      "haveAccount": "Already have an account?",
+      "login": "Sign In"
+    },
+    "forgot": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email to reset your password",
+      "email": "Email Address",
+      "button": "Send Reset Link",
+      "backToLogin": "Back to Sign In"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "About Us",
+      "description": "We offer innovative solutions in signage and digital printing. We add value to your brand with professional designs and fast delivery."
+    },
+    "quickLinks": {
+      "title": "Quick Links"
+    },
+    "services": {
+      "title": "Services"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Working Hours"
+    },
+    "newsletter": {
+      "title": "Subscribe to Our Newsletter",
+      "subtitle": "Be the first to know about new products and campaigns",
+      "placeholder": "Enter your email",
+      "button": "Subscribe"
+    },
+    "social": {
+      "title": "Follow Us"
+    },
+    "bottom": {
+      "rights": "All rights reserved.",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "notFound": "Page not found",
+    "unauthorized": "Unauthorized access",
+    "validation": "Please check your input",
+    "network": "Network error. Please check your connection.",
+    "server": "Server error. Please try again later.",
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPhone": "Please enter a valid phone number",
+    "passwordMismatch": "Passwords do not match",
+    "minLength": "Must be at least {{count}} characters",
+    "maxLength": "Must be at most {{count}} characters",
+    "fileTooLarge": "File size must be less than {{size}}MB",
+    "invalidFileType": "Invalid file type. Allowed: {{types}}"
+  }
+}

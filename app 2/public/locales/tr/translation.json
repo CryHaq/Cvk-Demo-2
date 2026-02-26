@@ -1,0 +1,372 @@
+{
+  "common": {
+    "appName": "CVK Dijital",
+    "tagline": "Tabela ve Dijital Baskı Çözümleri",
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "retry": "Tekrar Dene",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "remove": "Kaldır",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "view": "Görüntüle",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "continue": "Devam Et",
+    "submit": "Gönder",
+    "success": "Başarılı",
+    "warning": "Uyarı",
+    "info": "Bilgi",
+    "yes": "Evet",
+    "no": "Hayır",
+    "or": "veya",
+    "and": "ve",
+    "from": "den",
+    "to": "e",
+    "all": "Tümü",
+    "none": "Hiçbiri",
+    "select": "Seç",
+    "selected": "Seçili",
+    "optional": "İsteğe Bağlı",
+    "required": "Zorunlu",
+    "perPiece": "adet başı",
+    "free": "ÜCRETSİZ",
+    "new": "YENİ",
+    "popular": "POPÜLER",
+    "sale": "İNDİRİM",
+    "bestseller": "ÇOK SATAN",
+    "customize": "Özelleştir",
+    "configure": "Yapılandır",
+    "calculate": "Fiyat Hesapla",
+    "addToCart": "Sepete Ekle",
+    "addToWishlist": "Favorilere Ekle",
+    "removeFromWishlist": "Favorilerden Kaldır",
+    "compare": "Karşılaştır",
+    "share": "Paylaş",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı!",
+    "readMore": "Devamını Oku",
+    "showMore": "Daha Fazla",
+    "showLess": "Daha Az",
+    "viewAll": "Tümünü Gör",
+    "seeDetails": "Detayları Gör",
+    "contactUs": "Bize Ulaşın",
+    "getOffer": "Teklif Al",
+    "callNow": "Hemen Ara",
+    "sendMessage": "Mesaj Gönder"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "shop": "Mağaza",
+    "products": "Ürünler",
+    "services": "Hizmetler",
+    "portfolio": "Portföy",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "blog": "Blog",
+    "faq": "SSS",
+    "support": "Destek",
+    "cart": "Sepet",
+    "wishlist": "Favoriler",
+    "account": "Hesabım",
+    "orders": "Siparişlerim",
+    "admin": "Yönetim Paneli",
+    "logout": "Çıkış Yap",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol"
+  },
+  "hero": {
+    "title": "Tabela ve Dijital Baskıda Yenilikçi Çözümler",
+    "subtitle": "3D konfigurator ile hayalinizdeki tabelayı dakikalar içinde oluşturun. Profesyonel sonuçlar, süper hızlı teslimat.",
+    "ctaPrimary": "Tasarlamaya Başla",
+    "ctaSecondary": "Ürünleri Keşfet",
+    "badge": "50.000+ Proje Tamamlandı",
+    "features": {
+      "freeDesign": "Ücretsiz Tasarım",
+      "fastDelivery": "Hızlı Teslimat",
+      "installment": "Taksit İmkanı",
+      "warranty": "2 Yıl Garanti"
+    }
+  },
+  "categories": {
+    "title": "Ürün Kategorileri",
+    "subtitle": "Her ihtiyaca uygun ürünlerimizi keşfedin",
+    "all": "Tüm Kategoriler",
+    "indoor": "İç Mekan",
+    "outdoor": "Dış Mekan",
+    "event": "Etkinlik & Organizasyon",
+    "stand": "Fuar Standı",
+    "retail": "Perakende & Mağaza",
+    "corporate": "Kurumsal Kimlik",
+    "led": "LED Ekranlar"
+  },
+  "products": {
+    "title": "Ürünlerimiz",
+    "subtitle": "Yüksek kaliteli tabela ve dijital baskı ürünleri",
+    "noProducts": "Ürün bulunamadı",
+    "noProductsDesc": "Filtrelerinizi veya arama terimlerinizi değiştirmeyi deneyin",
+    "specs": "Teknik Özellikler",
+    "features": "Özellikler",
+    "usageAreas": "Kullanım Alanları",
+    "dimensions": "Boyutlar",
+    "material": "Malzeme",
+    "color": "Renk",
+    "colors": "Renkler",
+    "customize": "Özelleştir",
+    "inStock": "Stokta Var",
+    "outOfStock": "Stokta Yok",
+    "estimatedDelivery": "Tahmini Teslimat",
+    "minOrder": "Minimum Sipariş",
+    "pricePerPiece": "Adet başı fiyat"
+  },
+  "configurator": {
+    "title": "3D Konfigurator",
+    "subtitle": "Dakikalar içinde özelleştirilmiş tabelanızı oluşturun",
+    "steps": {
+      "model": "1. Model Seç",
+      "size": "2. Boyut Belirle",
+      "color": "3. Renk Seç",
+      "material": "4. Malzeme Seçimi",
+      "text": "5. Yazı Ekle",
+      "extras": "6. Ekstralar"
+    },
+    "size": {
+      "width": "Genişlik",
+      "height": "Yükseklik",
+      "custom": "Özel Boyut",
+      "preset": "Standart Boyutlar"
+    },
+    "text": {
+      "title": "Yazı Ekle",
+      "placeholder": "Tabela yazınız",
+      "font": "Yazı Tipi",
+      "fontSize": "Yazı Boyutu",
+      "alignment": "Hizalama",
+      "effect": "Yazı Efekti",
+      "none": "Yok",
+      "bold": "Kalın",
+      "italic": "İtalik",
+      "shadow": "Gölge",
+      "glow": "Parlama"
+    },
+    "material": {
+      "title": "Malzeme Seçimi",
+      "pvc": "PVC Köpük",
+      "aluminum": "Alüminyum Kompozit",
+      "acrylic": "Akrilik",
+      "wood": "Ahşap",
+      "metal": "Metal"
+    },
+    "lighting": {
+      "title": "Aydınlatma Seçenekleri",
+      "none": "Aydınlatma Yok",
+      "front": "Ön Yüz Aydınlatma",
+      "back": "Arka Yüz Aydınlatma (Halo)",
+      "edge": "Kenar Aydınlatma",
+      "neon": "Neon Efekt"
+    },
+    "summary": {
+      "title": "Özet",
+      "model": "Model",
+      "size": "Boyutlar",
+      "material": "Malzeme",
+      "color": "Renk",
+      "lighting": "Aydınlatma",
+      "text": "Yazı",
+      "extras": "Ekstralar",
+      "total": "Toplam",
+      "addToCart": "Sepete Ekle"
+    }
+  },
+  "cart": {
+    "title": "Alışveriş Sepeti",
+    "empty": "Sepetiniz boş",
+    "emptyDesc": "Sipariş oluşturmak için ürün eklemeye başlayın",
+    "continueShopping": "Alışverişe Devam Et",
+    "items": "ürün",
+    "item": "ürün",
+    "quantity": "Adet",
+    "price": "Fiyat",
+    "total": "Toplam",
+    "subtotal": "Ara Toplam",
+    "shipping": "Kargo",
+    "shippingFree": "ÜCRETSİZ",
+    "shippingInfo": "500€ üzeri siparişlerde ücretsiz kargo",
+    "discount": "İndirim",
+    "coupon": "Kupon Kodu",
+    "couponPlaceholder": "Kod girin",
+    "apply": "Uygula",
+    "remove": "Kaldır",
+    "couponApplied": "Kupon başarıyla uygulandı!",
+    "invalidCoupon": "Geçersiz kupon kodu",
+    "checkout": "Satın Al",
+    "estimatedDelivery": "Tahmini Teslimat",
+    "securePayment": "Güvenli Ödeme",
+    "vatIncluded": "KDV dahil"
+  },
+  "checkout": {
+    "title": "Ödeme",
+    "steps": {
+      "information": "Bilgiler",
+      "shipping": "Kargo",
+      "payment": "Ödeme",
+      "review": "Kontrol"
+    },
+    "contact": {
+      "title": "İletişim Bilgileri",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "subscribe": "Haber ve kampanyalardan haberdar olmak istiyorum"
+    },
+    "shipping": {
+      "title": "Teslimat Adresi",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "company": "Şirket (İsteğe Bağlı)",
+      "address": "Adres",
+      "apartment": "Daire, kat vb. (İsteğe Bağlı)",
+      "city": "Şehir",
+      "postalCode": "Posta Kodu",
+      "country": "Ülke",
+      "phone": "Telefon"
+    },
+    "shippingMethod": {
+      "title": "Kargo Yöntemi",
+      "standard": "Standart Kargo",
+      "express": "Express Kargo",
+      "pickup": "Mağazadan Teslim"
+    },
+    "payment": {
+      "title": "Ödeme",
+      "method": "Ödeme Yöntemi",
+      "card": "Kredi/Banka Kartı",
+      "paypal": "PayPal",
+      "bankTransfer": "Havale/EFT",
+      "cashOnDelivery": "Kapıda Ödeme",
+      "cardNumber": "Kart Numarası",
+      "cardHolder": "Kart Üzerindeki İsim",
+      "expiry": "Son Kullanma Tarihi",
+      "cvv": "CVV",
+      "secureInfo": "Ödeme bilgileriniz güvenli ve şifrelenmiştir"
+    },
+    "summary": {
+      "title": "Sipariş Özeti",
+      "edit": "Düzenle",
+      "placeOrder": "Sipariş Ver",
+      "agreeTerms": "Hizmet Şartları ve Gizlilik Politikasını kabul ediyorum"
+    }
+  },
+  "order": {
+    "title": "Sipariş Detayları",
+    "number": "Sipariş Numarası",
+    "date": "Sipariş Tarihi",
+    "status": "Durum",
+    "statuses": {
+      "pending": "Beklemede",
+      "processing": "İşleniyor",
+      "shipped": "Kargoya Verildi",
+      "delivered": "Teslim Edildi",
+      "cancelled": "İptal Edildi",
+      "refunded": "İade Edildi"
+    },
+    "tracking": "Kargo Takip No",
+    "items": "Sipariş Ürünleri",
+    "shipping": "Teslimat Adresi",
+    "payment": "Ödeme Yöntemi",
+    "timeline": "Sipariş Durumu",
+    "reorder": "Tekrar Sipariş Ver",
+    "invoice": "Faturayı İndir",
+    "support": "Destek ile İletişim"
+  },
+  "auth": {
+    "login": {
+      "title": "Giriş Yap",
+      "subtitle": "Hesabınıza erişmek için giriş yapın",
+      "email": "E-posta Adresi",
+      "password": "Şifre",
+      "remember": "Beni hatırla",
+      "forgot": "Şifremi unuttum?",
+      "button": "Giriş Yap",
+      "noAccount": "Hesabınız yok mu?",
+      "register": "Kayıt Ol"
+    },
+    "register": {
+      "title": "Hesap Oluştur",
+      "subtitle": "Alışverişe başlamak için kaydolun",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "email": "E-posta Adresi",
+      "phone": "Telefon Numarası",
+      "password": "Şifre",
+      "passwordConfirm": "Şifre Tekrar",
+      "agree": "Hizmet Şartları ve Gizlilik Politikasını kabul ediyorum",
+      "button": "Hesap Oluştur",
+      "haveAccount": "Zaten hesabınız var mı?",
+      "login": "Giriş Yap"
+    },
+    "forgot": {
+      "title": "Şifre Sıfırla",
+      "subtitle": "Şifrenizi sıfırlamak için e-posta adresinizi girin",
+      "email": "E-posta Adresi",
+      "button": "Sıfırlama Bağlantısı Gönder",
+      "backToLogin": "Girişe Dön"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "Hakkımızda",
+      "description": "Tabela ve dijital baskıda yenilikçi çözümler sunuyoruz. Profesyonel tasarımlar ve hızlı teslimat ile markanıza değer katıyoruz."
+    },
+    "quickLinks": {
+      "title": "Hızlı Bağlantılar"
+    },
+    "services": {
+      "title": "Hizmetler"
+    },
+    "contact": {
+      "title": "İletişim",
+      "address": "Adres",
+      "phone": "Telefon",
+      "email": "E-posta",
+      "hours": "Çalışma Saatleri"
+    },
+    "newsletter": {
+      "title": "Bültenimize Abone Olun",
+      "subtitle": "Yeni ürünler ve kampanyalardan ilk siz haberdar olun",
+      "placeholder": "E-posta adresinizi girin",
+      "button": "Abone Ol"
+    },
+    "social": {
+      "title": "Bizi Takip Edin"
+    },
+    "bottom": {
+      "rights": "Tüm hakları saklıdır.",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Hizmet Şartları",
+      "cookies": "Çerez Politikası"
+    }
+  },
+  "errors": {
+    "generic": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+    "notFound": "Sayfa bulunamadı",
+    "unauthorized": "Yetkisiz erişim",
+    "validation": "Lütfen bilgilerinizi kontrol edin",
+    "network": "Ağ hatası. Lütfen bağlantınızı kontrol edin.",
+    "server": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
+    "required": "Bu alan zorunludur",
+    "invalidEmail": "Geçerli bir e-posta adresi girin",
+    "invalidPhone": "Geçerli bir telefon numarası girin",
+    "passwordMismatch": "Şifreler eşleşmiyor",
+    "minLength": "En az {{count}} karakter olmalıdır",
+    "maxLength": "En fazla {{count}} karakter olabilir",
+    "fileTooLarge": "Dosya boyutu {{size}}MB'dan küçük olmalıdır",
+    "invalidFileType": "Geçersiz dosya türü. İzin verilen: {{types}}"
+  }
+}

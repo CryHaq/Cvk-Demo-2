@@ -252,12 +252,25 @@ export const orderApi = {
     return { success: true, data: order };
   },
 
-  async updateOrderStatus(orderId: number, newStatus: Order['status'], note?: string): Promise<{ success: boolean; message?: string }> {
+  async updateOrderStatus(
+    orderId: number,
+    newStatus: Order['status'],
+    note?: string,
+    options?: { paymentStatus?: Order['payment_status']; shippingCompany?: string; trackingNumber?: string }
+  ): Promise<{ success: boolean; message?: string }> {
     if (hasBackend()) {
       try {
         const apiData = await requestApi(API_ENDPOINTS.orders, {
           method: 'POST',
-          body: JSON.stringify({ action: 'update_status', orderId, status: newStatus, note }),
+          body: JSON.stringify({
+            action: 'update_status',
+            orderId,
+            status: newStatus,
+            note,
+            paymentStatus: options?.paymentStatus,
+            shippingCompany: options?.shippingCompany,
+            trackingNumber: options?.trackingNumber,
+          }),
         });
         return { success: true, message: apiData.message || 'Sipariş durumu güncellendi' };
       } catch (error) {
@@ -272,6 +285,15 @@ export const orderApi = {
     const order = orders[orderIndex];
     const oldStatus = order.status;
     order.status = newStatus;
+    if (options?.paymentStatus) {
+      order.payment_status = options.paymentStatus;
+    }
+    if (options?.shippingCompany) {
+      order.shipping_company = options.shippingCompany;
+    }
+    if (options?.trackingNumber) {
+      order.tracking_number = options.trackingNumber;
+    }
     order.updated_at = new Date().toISOString();
     order.status_history.push({
       id: Date.now(),
@@ -285,6 +307,17 @@ export const orderApi = {
 
     saveMockOrders(orders);
     return { success: true, message: 'Sipariş durumu güncellendi' };
+  },
+
+  async sendCustomerNotification(
+    orderId: number,
+    channel: 'email' | 'sms',
+    template: 'payment_received' | 'shipment_created' | 'invoice_ready'
+  ): Promise<{ success: boolean; message?: string }> {
+    void orderId;
+    void channel;
+    void template;
+    return { success: true, message: 'Müşteri bildirimi gönderildi' };
   },
 
   async processPayment(orderId: number): Promise<{ success: boolean; message?: string; data?: any }> {

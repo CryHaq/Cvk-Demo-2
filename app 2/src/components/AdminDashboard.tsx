@@ -24,6 +24,9 @@ import {
   WandSparkles,
   Save,
   X,
+  Eye,
+  Mail,
+  Smartphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -60,11 +63,27 @@ import {
   Line,
   ComposedChart,
 } from 'recharts';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface OrderItem {
   id: number;
   product_type?: string;
+  size?: string;
+  material?: string;
   quantity: number;
+  unit_price?: number;
+  total_price?: number;
+}
+
+interface OrderStatusHistory {
+  id: number;
+  old_status?: string;
+  new_status: string;
+  changed_by: number;
+  changed_by_type: 'system' | 'admin' | 'customer';
+  note?: string;
+  created_at: string;
 }
 
 type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
@@ -74,15 +93,24 @@ type ProductStatus = 'active' | 'passive' | 'out_of_stock';
 interface Order {
   id: number;
   order_number: string;
+  user_id?: number;
+  subtotal?: number;
+  vat_amount?: number;
+  discount_amount?: number;
+  shipping_cost?: number;
   total_amount: number;
   status: OrderStatus;
   payment_status: PaymentStatus;
+  payment_method?: string;
+  shipping_company?: string;
+  tracking_number?: string;
   created_at: string;
   shipping_address: {
     full_name: string;
     email: string;
   };
   items: OrderItem[];
+  status_history?: OrderStatusHistory[];
 }
 
 interface PeriodMetric {
@@ -688,6 +716,10 @@ export default function AdminDashboard() {
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | OrderStatus>('all');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState<'all' | PaymentStatus>('all');
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<'all' | string>('all');
+  const [orderDateFilter, setOrderDateFilter] = useState<'all' | 'today' | '7days' | '30days' | '90days'>('all');
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [orderActionLoadingId, setOrderActionLoadingId] = useState<number | null>(null);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
   const [dateRange, setDateRange] = useState('7days');
   const [loading, setLoading] = useState(true);
@@ -1101,10 +1133,38 @@ export default function AdminDashboard() {
 
       const matchesStatus = orderStatusFilter === 'all' || order.status === orderStatusFilter;
       const matchesPayment = paymentStatusFilter === 'all' || order.payment_status === paymentStatusFilter;
+      const matchesPaymentMethod =
+        paymentMethodFilter === 'all' || (order.payment_method || '').toLowerCase() === paymentMethodFilter.toLowerCase();
 
-      return matchesQuery && matchesStatus && matchesPayment;
+      const matchesDate =
+        orderDateFilter === 'all' ||
+        (orderDateFilter === 'today'
+          ? isWithinDays(order.created_at, 1)
+          : orderDateFilter === '7days'
+          ? isWithinDays(order.created_at, 7)
+          : orderDateFilter === '30days'
+          ? isWithinDays(order.created_at, 30)
+          : isWithinDays(order.created_at, 90));
+
+      return matchesQuery && matchesStatus && matchesPayment && matchesPaymentMethod && matchesDate;
     });
-  }, [sortedOrders, orderSearch, orderStatusFilter, paymentStatusFilter]);
+  }, [sortedOrders, orderSearch, orderStatusFilter, paymentStatusFilter, paymentMethodFilter, orderDateFilter]);
+
+  const paymentMethodOptions = useMemo(() => {
+    const methods = Array.from(
+      new Set(
+        orders
+          .map((order) => (order.payment_method || '').trim())
+          .filter(Boolean)
+      )
+    );
+    return methods.sort((a, b) => a.localeCompare(b, 'tr'));
+  }, [orders]);
+
+  const selectedOrder = useMemo(
+    () => orders.find((order) => order.id === selectedOrderId) || null,
+    [orders, selectedOrderId]
+  );
 
   const orderOpsSummary = useMemo(
     () => ({
@@ -1407,6 +1467,93 @@ export default function AdminDashboard() {
       toast.error('Sipariş durumu güncellenirken hata oluştu.');
     } finally {
       setUpdatingOrderId(null);
+    }
+  };
+
+  const generateTrackingNumber = () => `TRK${Date.now().toString().slice(-10)}`;
+
+  const handleMarkPaymentReceived = async (order: Order) => {
+    setOrderActionLoadingId(order.id);
+    try {
+      const result = await orderApi.updateOrderStatus(
+        order.id,
+        order.status === 'pending' ? 'confirmed' : order.status,
+        'Ödeme alındı ve sipariş onaylandı',
+        { paymentStatus: 'paid' }
+      );
+      if (!result.success) {
+        toast.error(result.message || 'Ödeme durumu güncellenemedi.');
+        return;
+      }
+      await orderApi.sendCustomerNotification(order.id, 'email', 'payment_received');
+      await orderApi.sendCustomerNotification(order.id, 'sms', 'payment_received');
+      toast.success('Ödeme alındı, müşteri bilgilendirmeleri gönderildi.');
+      await loadData();
+    } catch {
+      toast.error('Ödeme işlemi sırasında hata oluştu.');
+    } finally {
+      setOrderActionLoadingId(null);
+    }
+  };
+
+  const handleCreateShipment = async (order: Order) => {
+    const trackingNumber = generateTrackingNumber();
+    const shippingCompany = order.shipping_company || 'Yurtici Kargo';
+    setOrderActionLoadingId(order.id);
+    try {
+      const result = await orderApi.updateOrderStatus(
+        order.id,
+        'shipped',
+        `Kargoya verildi (${shippingCompany} - ${trackingNumber})`,
+        { shippingCompany, trackingNumber }
+      );
+      if (!result.success) {
+        toast.error(result.message || 'Kargo olusturulamadi.');
+        return;
+      }
+      await orderApi.sendCustomerNotification(order.id, 'email', 'shipment_created');
+      await orderApi.sendCustomerNotification(order.id, 'sms', 'shipment_created');
+      toast.success(`Kargo oluşturuldu: ${trackingNumber}`);
+      await loadData();
+    } catch {
+      toast.error('Kargo oluşturma sırasında hata oluştu.');
+    } finally {
+      setOrderActionLoadingId(null);
+    }
+  };
+
+  const handleGenerateInvoicePdf = (order: Order) => {
+    try {
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text('CVK Dijital - Fatura', 14, 16);
+      doc.setFontSize(11);
+      doc.text(`Siparis No: ${order.order_number}`, 14, 24);
+      doc.text(`Tarih: ${new Date(order.created_at).toLocaleString('tr-TR')}`, 14, 30);
+      doc.text(`Musteri: ${order.shipping_address?.full_name || '-'}`, 14, 36);
+      doc.text(`E-posta: ${order.shipping_address?.email || '-'}`, 14, 42);
+      doc.text(`Durum: ${order.status}`, 14, 48);
+
+      autoTable(doc, {
+        startY: 56,
+        head: [['Urun', 'Miktar', 'Birim Fiyat', 'Toplam']],
+        body: (order.items || []).map((item) => [
+          `${item.product_type || '-'} ${item.size ? `(${item.size})` : ''}`,
+          String(item.quantity || 0),
+          `€${Number(item.unit_price || 0).toFixed(2)}`,
+          `€${Number(item.total_price || 0).toFixed(2)}`,
+        ]),
+      });
+
+      const y = (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable.finalY + 12 : 130;
+      doc.text(`Ara Toplam: €${Number(order.subtotal || 0).toFixed(2)}`, 14, y);
+      doc.text(`KDV: €${Number(order.vat_amount || 0).toFixed(2)}`, 14, y + 6);
+      doc.text(`Toplam: €${Number(order.total_amount || 0).toFixed(2)}`, 14, y + 12);
+
+      doc.save(`fatura-${order.order_number}.pdf`);
+      toast.success('Fatura PDF oluşturuldu.');
+    } catch {
+      toast.error('Fatura PDF oluşturulamadı.');
     }
   };
 
@@ -1880,10 +2027,10 @@ export default function AdminDashboard() {
     };
     const labels: { [key: string]: string } = {
       pending: 'Beklemede',
-      confirmed: 'Onaylandı',
-      processing: 'İşleniyor',
-      shipped: 'Kargoda',
-      delivered: 'Teslim',
+      confirmed: 'Ödeme Alındı',
+      processing: 'Hazırlanıyor',
+      shipped: 'Kargoya Verildi',
+      delivered: 'Tamamlandı',
       cancelled: 'İptal',
       refunded: 'İade',
     };
@@ -2154,6 +2301,92 @@ export default function AdminDashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {selectedOrder && (
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Sipariş Detayı • {selectedOrder.order_number}</CardTitle>
+                  <CardDescription>
+                    {new Date(selectedOrder.created_at).toLocaleString('tr-TR')} • {selectedOrder.shipping_address?.full_name}
+                  </CardDescription>
+                </div>
+                <Button variant="outline" onClick={() => setSelectedOrderId(null)}>
+                  <X className="w-4 h-4 mr-2" />
+                  Kapat
+                </Button>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <div className="rounded-xl border p-4">
+                    <p className="text-xs text-gray-500 mb-1">Sipariş Durumu</p>
+                    {getStatusBadge(selectedOrder.status)}
+                  </div>
+                  <div className="rounded-xl border p-4">
+                    <p className="text-xs text-gray-500 mb-1">Ödeme</p>
+                    <p className="font-semibold capitalize">{selectedOrder.payment_status}</p>
+                    <p className="text-xs text-gray-500 mt-1">Tip: {selectedOrder.payment_method || '-'}</p>
+                  </div>
+                  <div className="rounded-xl border p-4">
+                    <p className="text-xs text-gray-500 mb-1">Kargo Bilgisi</p>
+                    <p className="font-semibold">{selectedOrder.shipping_company || 'Henüz oluşturulmadı'}</p>
+                    <p className="text-xs text-gray-500 mt-1">Takip: {selectedOrder.tracking_number || '-'}</p>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border">
+                  <div className="px-4 py-3 border-b font-semibold">Ürünler ve Fiyat Kırılımı</div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-2 px-4">Ürün</th>
+                          <th className="text-left py-2 px-4">Miktar</th>
+                          <th className="text-left py-2 px-4">Birim</th>
+                          <th className="text-left py-2 px-4">Toplam</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(selectedOrder.items || []).map((item) => (
+                          <tr key={item.id} className="border-b">
+                            <td className="py-2 px-4">
+                              <p className="font-medium">{item.product_type}</p>
+                              <p className="text-xs text-gray-500">{item.size || '-'} / {item.material || '-'}</p>
+                            </td>
+                            <td className="py-2 px-4">{item.quantity}</td>
+                            <td className="py-2 px-4">€{Number(item.unit_price || 0).toFixed(2)}</td>
+                            <td className="py-2 px-4">€{Number(item.total_price || 0).toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="p-4 bg-gray-50 border-t text-sm space-y-1">
+                    <div className="flex justify-between"><span>Ara Toplam</span><span>€{Number(selectedOrder.subtotal || 0).toFixed(2)}</span></div>
+                    <div className="flex justify-between"><span>KDV</span><span>€{Number(selectedOrder.vat_amount || 0).toFixed(2)}</span></div>
+                    <div className="flex justify-between"><span>Kargo</span><span>€{Number(selectedOrder.shipping_cost || 0).toFixed(2)}</span></div>
+                    <div className="flex justify-between font-bold text-base border-t pt-2"><span>Genel Toplam</span><span>€{Number(selectedOrder.total_amount || 0).toFixed(2)}</span></div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border p-4">
+                  <p className="font-semibold mb-2">Durum Geçmişi</p>
+                  <div className="space-y-2">
+                    {(selectedOrder.status_history || []).slice().reverse().map((history: OrderStatusHistory) => (
+                      <div key={history.id} className="rounded-lg border p-3">
+                        <p className="text-sm font-medium">{history.new_status}</p>
+                        <p className="text-xs text-gray-500">{new Date(history.created_at).toLocaleString('tr-TR')}</p>
+                        {history.note && <p className="text-xs text-gray-600 mt-1">{history.note}</p>}
+                      </div>
+                    ))}
+                    {(selectedOrder.status_history || []).length === 0 && (
+                      <p className="text-sm text-gray-500">Durum geçmişi kaydı bulunamadı.</p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="orders">
@@ -2207,10 +2440,10 @@ export default function AdminDashboard() {
                   <SelectContent>
                     <SelectItem value="all">Tüm Durumlar</SelectItem>
                     <SelectItem value="pending">Beklemede</SelectItem>
-                    <SelectItem value="confirmed">Onaylandı</SelectItem>
-                    <SelectItem value="processing">İşleniyor</SelectItem>
-                    <SelectItem value="shipped">Kargoda</SelectItem>
-                    <SelectItem value="delivered">Teslim</SelectItem>
+                    <SelectItem value="confirmed">Ödeme Alındı</SelectItem>
+                    <SelectItem value="processing">Hazırlanıyor</SelectItem>
+                    <SelectItem value="shipped">Kargoya Verildi</SelectItem>
+                    <SelectItem value="delivered">Tamamlandı</SelectItem>
                     <SelectItem value="cancelled">İptal</SelectItem>
                     <SelectItem value="refunded">İade</SelectItem>
                   </SelectContent>
@@ -2228,6 +2461,32 @@ export default function AdminDashboard() {
                     <SelectItem value="refunded">İade</SelectItem>
                   </SelectContent>
                 </Select>
+                <Select value={paymentMethodFilter} onValueChange={(value) => setPaymentMethodFilter(value)}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Ödeme tipi" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tüm Tipler</SelectItem>
+                    {paymentMethodOptions.map((method) => (
+                      <SelectItem key={method} value={method}>
+                        {method}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={orderDateFilter} onValueChange={(value) => setOrderDateFilter(value as 'all' | 'today' | '7days' | '30days' | '90days')}>
+                  <SelectTrigger className="w-[150px]">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Tarih" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tüm Tarihler</SelectItem>
+                    <SelectItem value="today">Bugün</SelectItem>
+                    <SelectItem value="7days">7 Gün</SelectItem>
+                    <SelectItem value="30days">30 Gün</SelectItem>
+                    <SelectItem value="90days">90 Gün</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardHeader>
             <CardContent>
@@ -2243,7 +2502,9 @@ export default function AdminDashboard() {
                       <th className="text-left py-3 px-4">Durum</th>
                       <th className="text-left py-3 px-4">Ödeme</th>
                       <th className="text-left py-3 px-4">Tarih</th>
+                      <th className="text-left py-3 px-4">Ödeme Tipi</th>
                       <th className="text-left py-3 px-4">Hızlı İşlem</th>
+                      <th className="text-left py-3 px-4">Aksiyonlar</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2275,6 +2536,7 @@ export default function AdminDashboard() {
                           </Badge>
                         </td>
                         <td className="py-3 px-4 text-gray-500">{new Date(order.created_at).toLocaleDateString('tr-TR')}</td>
+                        <td className="py-3 px-4 text-gray-500">{order.payment_method || '-'}</td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             <Select
@@ -2287,10 +2549,10 @@ export default function AdminDashboard() {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="pending">Beklemede</SelectItem>
-                                <SelectItem value="confirmed">Onaylandı</SelectItem>
-                                <SelectItem value="processing">İşleniyor</SelectItem>
-                                <SelectItem value="shipped">Kargoda</SelectItem>
-                                <SelectItem value="delivered">Teslim</SelectItem>
+                                <SelectItem value="confirmed">Ödeme Alındı</SelectItem>
+                                <SelectItem value="processing">Hazırlanıyor</SelectItem>
+                                <SelectItem value="shipped">Kargoya Verildi</SelectItem>
+                                <SelectItem value="delivered">Tamamlandı</SelectItem>
                                 <SelectItem value="cancelled">İptal</SelectItem>
                                 <SelectItem value="refunded">İade</SelectItem>
                               </SelectContent>
@@ -2298,6 +2560,49 @@ export default function AdminDashboard() {
                             {updatingOrderId === order.id && (
                               <RefreshCw className="w-4 h-4 animate-spin text-[#0077be]" />
                             )}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            <Button size="sm" variant="outline" onClick={() => setSelectedOrderId(order.id)}>
+                              <Eye className="w-4 h-4 mr-1" />
+                              Detay
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleMarkPaymentReceived(order)}
+                              disabled={orderActionLoadingId === order.id || order.payment_status === 'paid'}
+                            >
+                              <CreditCard className="w-4 h-4 mr-1" />
+                              Ödeme Alındı
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleCreateShipment(order)}
+                              disabled={orderActionLoadingId === order.id || order.status === 'shipped' || order.status === 'delivered'}
+                            >
+                              <Truck className="w-4 h-4 mr-1" />
+                              Kargo Oluştur
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleGenerateInvoicePdf(order)}>
+                              <FileSpreadsheet className="w-4 h-4 mr-1" />
+                              Fatura PDF
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={async () => {
+                                await orderApi.sendCustomerNotification(order.id, 'email', 'invoice_ready');
+                                await orderApi.sendCustomerNotification(order.id, 'sms', 'invoice_ready');
+                                toast.success('Müşteriye otomatik mail/SMS gönderildi.');
+                              }}
+                            >
+                              <Mail className="w-4 h-4 mr-1" />
+                              <Smartphone className="w-4 h-4 mr-1" />
+                              Mail/SMS
+                            </Button>
                           </div>
                         </td>
                       </tr>

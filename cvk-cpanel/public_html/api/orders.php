@@ -278,10 +278,18 @@ function updateOrderStatus(PDO $pdo, array $currentUser, array $data): void {
     $orderId = (int)($data['orderId'] ?? 0);
     $newStatus = sanitizeText($data['status'] ?? '');
     $note = sanitizeText($data['note'] ?? '');
+    $paymentStatus = sanitizeText($data['paymentStatus'] ?? '');
+    $shippingCompany = sanitizeText($data['shippingCompany'] ?? '');
+    $trackingNumber = sanitizeText($data['trackingNumber'] ?? '');
 
     $validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
     if ($orderId <= 0 || !in_array($newStatus, $validStatuses, true)) {
         jsonResponse(false, 'Geçersiz sipariş veya durum', null, 400);
+    }
+
+    $validPaymentStatuses = ['pending', 'paid', 'failed', 'refunded'];
+    if ($paymentStatus !== '' && !in_array($paymentStatus, $validPaymentStatuses, true)) {
+        jsonResponse(false, 'Geçersiz ödeme durumu', null, 400);
     }
 
     $stmt = $pdo->prepare('SELECT status FROM orders WHERE id = ? LIMIT 1');
@@ -296,8 +304,28 @@ function updateOrderStatus(PDO $pdo, array $currentUser, array $data): void {
     try {
         $pdo->beginTransaction();
 
-        $updateStmt = $pdo->prepare('UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?');
-        $updateStmt->execute([$newStatus, $orderId]);
+        $fields = ['status = ?'];
+        $params = [$newStatus];
+
+        if ($paymentStatus !== '') {
+            $fields[] = 'payment_status = ?';
+            $params[] = $paymentStatus;
+        }
+        if ($shippingCompany !== '') {
+            $fields[] = 'shipping_company = ?';
+            $params[] = $shippingCompany;
+        }
+        if ($trackingNumber !== '') {
+            $fields[] = 'tracking_number = ?';
+            $params[] = $trackingNumber;
+        }
+
+        $fields[] = 'updated_at = NOW()';
+        $params[] = $orderId;
+
+        $sql = 'UPDATE orders SET ' . implode(', ', $fields) . ' WHERE id = ?';
+        $updateStmt = $pdo->prepare($sql);
+        $updateStmt->execute($params);
 
         $historyStmt = $pdo->prepare(
             'INSERT INTO order_status_history (order_id, old_status, new_status, changed_by, changed_by_type, note, created_at)

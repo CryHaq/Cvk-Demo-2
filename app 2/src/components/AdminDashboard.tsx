@@ -118,6 +118,15 @@ interface PeriodMetric {
   revenue: number;
 }
 
+interface FinancePeriodRow {
+  label: string;
+  paidRevenue: number;
+  failedRevenue: number;
+  refundedRevenue: number;
+  commission: number;
+  orderCount: number;
+}
+
 interface AlertItem {
   id: string;
   type: 'warning' | 'danger' | 'info';
@@ -230,6 +239,24 @@ const percent = new Intl.NumberFormat('tr-TR', {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  card: 'Kredi Kartı',
+  credit_card: 'Kredi Kartı',
+  havale: 'Havale/EFT',
+  bank_transfer: 'Havale/EFT',
+  cod: 'Kapıda Ödeme',
+  cash_on_delivery: 'Kapıda Ödeme',
+};
+
+const PAYMENT_METHOD_COMMISSION_RATE: Record<string, number> = {
+  card: 0.029,
+  credit_card: 0.029,
+  havale: 0.005,
+  bank_transfer: 0.005,
+  cod: 0.015,
+  cash_on_delivery: 0.015,
+};
 
 const lowStockCatalog = [
   { name: 'Doypack 250g', stock: 12 },
@@ -1176,6 +1203,169 @@ export default function AdminDashboard() {
     [orders]
   );
 
+  const paymentMethodStats = useMemo(() => {
+    const initial: Record<string, { label: string; count: number; paidRevenue: number; failedCount: number }> = {};
+
+    orders.forEach((order) => {
+      const methodKey = (order.payment_method || 'card').toLowerCase();
+      const label = PAYMENT_METHOD_LABELS[methodKey] || methodKey || 'Belirsiz';
+      if (!initial[methodKey]) {
+        initial[methodKey] = { label, count: 0, paidRevenue: 0, failedCount: 0 };
+      }
+      initial[methodKey].count += 1;
+      if (order.payment_status === 'paid') initial[methodKey].paidRevenue += order.total_amount || 0;
+      if (order.payment_status === 'failed') initial[methodKey].failedCount += 1;
+    });
+
+    return Object.entries(initial)
+      .map(([key, value]) => ({ methodKey: key, ...value }))
+      .sort((a, b) => b.paidRevenue - a.paidRevenue);
+  }, [orders]);
+
+  const paymentSummary = useMemo(() => {
+    const paid = orders.filter((order) => order.payment_status === 'paid');
+    const failed = orders.filter((order) => order.payment_status === 'failed');
+    const refunded = orders.filter((order) => order.payment_status === 'refunded');
+    const pending = orders.filter((order) => order.payment_status === 'pending');
+
+    const paidRevenue = paid.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+    const refundedRevenue = refunded.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+    const failedRevenue = failed.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+    const pendingRevenue = pending.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+
+    return {
+      paidCount: paid.length,
+      failedCount: failed.length,
+      refundedCount: refunded.length,
+      pendingCount: pending.length,
+      paidRevenue,
+      refundedRevenue,
+      failedRevenue,
+      pendingRevenue,
+    };
+  }, [orders]);
+
+  const commissionSummary = useMemo(() => {
+    let totalCommission = 0;
+    const rows = orders
+      .filter((order) => order.payment_status === 'paid')
+      .map((order) => {
+        const methodKey = (order.payment_method || 'card').toLowerCase();
+        const rate = PAYMENT_METHOD_COMMISSION_RATE[methodKey] ?? 0.025;
+        const commission = (order.total_amount || 0) * rate;
+        totalCommission += commission;
+        return {
+          orderId: order.id,
+          orderNumber: order.order_number,
+          method: PAYMENT_METHOD_LABELS[methodKey] || methodKey || 'Belirsiz',
+          rate,
+          commission,
+          total: order.total_amount || 0,
+          date: order.created_at,
+        };
+      });
+
+    return { rows, totalCommission };
+  }, [orders]);
+
+  const dailyFinanceReport = useMemo((): FinancePeriodRow[] => {
+    const rows: FinancePeriodRow[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const dayStart = new Date();
+      dayStart.setHours(0, 0, 0, 0);
+      dayStart.setDate(dayStart.getDate() - i);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setDate(dayEnd.getDate() + 1);
+
+      const group = orders.filter((order) => {
+        const ts = new Date(order.created_at).getTime();
+        return ts >= dayStart.getTime() && ts < dayEnd.getTime();
+      });
+
+      const paidRevenue = group.filter((o) => o.payment_status === 'paid').reduce((s, o) => s + (o.total_amount || 0), 0);
+      const failedRevenue = group.filter((o) => o.payment_status === 'failed').reduce((s, o) => s + (o.total_amount || 0), 0);
+      const refundedRevenue = group.filter((o) => o.payment_status === 'refunded').reduce((s, o) => s + (o.total_amount || 0), 0);
+      const commission = group
+        .filter((o) => o.payment_status === 'paid')
+        .reduce((s, o) => {
+          const methodKey = (o.payment_method || 'card').toLowerCase();
+          const rate = PAYMENT_METHOD_COMMISSION_RATE[methodKey] ?? 0.025;
+          return s + (o.total_amount || 0) * rate;
+        }, 0);
+
+      rows.push({
+        label: dayStart.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }),
+        paidRevenue,
+        failedRevenue,
+        refundedRevenue,
+        commission,
+        orderCount: group.length,
+      });
+    }
+    return rows;
+  }, [orders]);
+
+  const monthlyFinanceReport = useMemo((): FinancePeriodRow[] => {
+    const rows: FinancePeriodRow[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const monthStart = new Date();
+      monthStart.setDate(1);
+      monthStart.setHours(0, 0, 0, 0);
+      monthStart.setMonth(monthStart.getMonth() - i);
+      const monthEnd = new Date(monthStart);
+      monthEnd.setMonth(monthEnd.getMonth() + 1);
+
+      const group = orders.filter((order) => {
+        const ts = new Date(order.created_at).getTime();
+        return ts >= monthStart.getTime() && ts < monthEnd.getTime();
+      });
+
+      const paidRevenue = group.filter((o) => o.payment_status === 'paid').reduce((s, o) => s + (o.total_amount || 0), 0);
+      const failedRevenue = group.filter((o) => o.payment_status === 'failed').reduce((s, o) => s + (o.total_amount || 0), 0);
+      const refundedRevenue = group.filter((o) => o.payment_status === 'refunded').reduce((s, o) => s + (o.total_amount || 0), 0);
+      const commission = group
+        .filter((o) => o.payment_status === 'paid')
+        .reduce((s, o) => {
+          const methodKey = (o.payment_method || 'card').toLowerCase();
+          const rate = PAYMENT_METHOD_COMMISSION_RATE[methodKey] ?? 0.025;
+          return s + (o.total_amount || 0) * rate;
+        }, 0);
+
+      rows.push({
+        label: monthStart.toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' }),
+        paidRevenue,
+        failedRevenue,
+        refundedRevenue,
+        commission,
+        orderCount: group.length,
+      });
+    }
+    return rows;
+  }, [orders]);
+
+  const financeSummary = useMemo(() => {
+    const paidRevenue = paymentSummary.paidRevenue;
+    const refundedRevenue = paymentSummary.refundedRevenue;
+    const campaignCost = campaignPerformance.reduce((sum, item) => sum + item.spend, 0);
+    const commissionCost = commissionSummary.totalCommission;
+    const productCostEstimate = paidRevenue * 0.62;
+    const preTaxProfit = paidRevenue - refundedRevenue - campaignCost - commissionCost - productCostEstimate;
+    const taxRate = 0.2;
+    const taxAmount = preTaxProfit > 0 ? preTaxProfit * taxRate : 0;
+    const postTaxProfit = preTaxProfit - taxAmount;
+
+    return {
+      paidRevenue,
+      refundedRevenue,
+      campaignCost,
+      commissionCost,
+      productCostEstimate,
+      preTaxProfit,
+      taxAmount,
+      postTaxProfit,
+    };
+  }, [paymentSummary, campaignPerformance, commissionSummary]);
+
   const filteredProducts = useMemo(() => {
     const query = productSearch.trim().toLowerCase();
     return products.filter((product) => {
@@ -1517,6 +1707,30 @@ export default function AdminDashboard() {
       await loadData();
     } catch {
       toast.error('Kargo oluşturma sırasında hata oluştu.');
+    } finally {
+      setOrderActionLoadingId(null);
+    }
+  };
+
+  const handleRefundOrder = async (order: Order) => {
+    setOrderActionLoadingId(order.id);
+    try {
+      const result = await orderApi.updateOrderStatus(
+        order.id,
+        'refunded',
+        'Sipariş iade/refund olarak işaretlendi',
+        { paymentStatus: 'refunded' }
+      );
+      if (!result.success) {
+        toast.error(result.message || 'İade işlemi başarısız.');
+        return;
+      }
+      await orderApi.sendCustomerNotification(order.id, 'email', 'invoice_ready');
+      await orderApi.sendCustomerNotification(order.id, 'sms', 'invoice_ready');
+      toast.success('İade işlemi tamamlandı ve müşteri bilgilendirildi.');
+      await loadData();
+    } catch {
+      toast.error('İade işlemi sırasında hata oluştu.');
     } finally {
       setOrderActionLoadingId(null);
     }
@@ -2085,9 +2299,10 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList className="grid w-full grid-cols-7 lg:grid-cols-8">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
           <TabsTrigger value="overview">Dashboard</TabsTrigger>
           <TabsTrigger value="orders">Siparişler</TabsTrigger>
+          <TabsTrigger value="finance">Ödeme & Finans</TabsTrigger>
           <TabsTrigger value="analytics">Analitik</TabsTrigger>
           <TabsTrigger value="products">Ürün Yönetimi</TabsTrigger>
           <TabsTrigger value="inventory">Stok & Envanter</TabsTrigger>
@@ -2593,6 +2808,15 @@ export default function AdminDashboard() {
                             <Button
                               size="sm"
                               variant="outline"
+                              onClick={() => handleRefundOrder(order)}
+                              disabled={orderActionLoadingId === order.id || order.payment_status === 'refunded'}
+                            >
+                              <RefreshCw className="w-4 h-4 mr-1" />
+                              İade/Refund
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
                               onClick={async () => {
                                 await orderApi.sendCustomerNotification(order.id, 'email', 'invoice_ready');
                                 await orderApi.sendCustomerNotification(order.id, 'sms', 'invoice_ready');
@@ -2614,6 +2838,171 @@ export default function AdminDashboard() {
                     Arama/filtre kriterlerine uygun sipariş bulunamadı.
                   </div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="finance" className="space-y-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Başarılı Ödeme</p><p className="text-2xl font-bold text-green-600">{paymentSummary.paidCount}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Başarısız Ödeme</p><p className="text-2xl font-bold text-rose-600">{paymentSummary.failedCount}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">İade/Geri Ödeme</p><p className="text-2xl font-bold text-amber-600">{paymentSummary.refundedCount}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Komisyon Toplamı</p><p className="text-2xl font-bold text-[#0077be]">{currency.format(commissionSummary.totalCommission)}</p></CardContent></Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Vergi Öncesi Net Kar</p><p className={`text-2xl font-bold ${financeSummary.preTaxProfit >= 0 ? 'text-green-700' : 'text-rose-700'}`}>{currency.format(financeSummary.preTaxProfit)}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Vergi Tutarı</p><p className="text-2xl font-bold text-amber-700">{currency.format(financeSummary.taxAmount)}</p></CardContent></Card>
+            <Card><CardContent className="pt-5"><p className="text-xs text-gray-500">Vergi Sonrası Net Kar</p><p className={`text-2xl font-bold ${financeSummary.postTaxProfit >= 0 ? 'text-green-700' : 'text-rose-700'}`}>{currency.format(financeSummary.postTaxProfit)}</p></CardContent></Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Ödeme Yöntemleri</CardTitle>
+                <CardDescription>Kredi kartı, havale, kapıda ödeme performansı</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3">Yöntem</th>
+                        <th className="text-left py-2 px-3">Adet</th>
+                        <th className="text-left py-2 px-3">Başarısız</th>
+                        <th className="text-left py-2 px-3">Başarılı Ciro</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paymentMethodStats.map((item) => (
+                        <tr key={item.methodKey} className="border-b">
+                          <td className="py-2 px-3 font-medium">{item.label}</td>
+                          <td className="py-2 px-3">{item.count}</td>
+                          <td className="py-2 px-3">{item.failedCount}</td>
+                          <td className="py-2 px-3">{currency.format(item.paidRevenue)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Maliyet Özeti</CardTitle>
+                <CardDescription>Kampanya, komisyon ve ürün maliyeti görünümü</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between text-sm"><span>Başarılı Ciro</span><span className="font-semibold">{currency.format(financeSummary.paidRevenue)}</span></div>
+                <div className="flex justify-between text-sm"><span>İade Tutarı</span><span className="font-semibold text-rose-700">-{currency.format(financeSummary.refundedRevenue)}</span></div>
+                <div className="flex justify-between text-sm"><span>Kampanya Maliyeti</span><span className="font-semibold text-amber-700">-{currency.format(financeSummary.campaignCost)}</span></div>
+                <div className="flex justify-between text-sm"><span>Komisyon Maliyeti</span><span className="font-semibold text-amber-700">-{currency.format(financeSummary.commissionCost)}</span></div>
+                <div className="flex justify-between text-sm"><span>Ürün Maliyet Tahmini</span><span className="font-semibold text-amber-700">-{currency.format(financeSummary.productCostEstimate)}</span></div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Günlük Finans Raporu</CardTitle>
+                <CardDescription>Son 7 gün</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3">Gün</th>
+                        <th className="text-left py-2 px-3">Sipariş</th>
+                        <th className="text-left py-2 px-3">Başarılı</th>
+                        <th className="text-left py-2 px-3">İade</th>
+                        <th className="text-left py-2 px-3">Komisyon</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dailyFinanceReport.map((row) => (
+                        <tr key={row.label} className="border-b">
+                          <td className="py-2 px-3">{row.label}</td>
+                          <td className="py-2 px-3">{row.orderCount}</td>
+                          <td className="py-2 px-3">{currency.format(row.paidRevenue)}</td>
+                          <td className="py-2 px-3">{currency.format(row.refundedRevenue)}</td>
+                          <td className="py-2 px-3">{currency.format(row.commission)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Aylık Finans Raporu</CardTitle>
+                <CardDescription>Son 6 ay</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-3">Ay</th>
+                        <th className="text-left py-2 px-3">Sipariş</th>
+                        <th className="text-left py-2 px-3">Başarılı</th>
+                        <th className="text-left py-2 px-3">İade</th>
+                        <th className="text-left py-2 px-3">Komisyon</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {monthlyFinanceReport.map((row) => (
+                        <tr key={row.label} className="border-b">
+                          <td className="py-2 px-3">{row.label}</td>
+                          <td className="py-2 px-3">{row.orderCount}</td>
+                          <td className="py-2 px-3">{currency.format(row.paidRevenue)}</td>
+                          <td className="py-2 px-3">{currency.format(row.refundedRevenue)}</td>
+                          <td className="py-2 px-3">{currency.format(row.commission)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Komisyon Takibi</CardTitle>
+              <CardDescription>Son 15 başarılı ödeme komisyon kalemleri</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-2 px-3">Sipariş</th>
+                      <th className="text-left py-2 px-3">Yöntem</th>
+                      <th className="text-left py-2 px-3">Oran</th>
+                      <th className="text-left py-2 px-3">Tutar</th>
+                      <th className="text-left py-2 px-3">Komisyon</th>
+                      <th className="text-left py-2 px-3">Tarih</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {commissionSummary.rows.slice(0, 15).map((row) => (
+                      <tr key={row.orderId} className="border-b">
+                        <td className="py-2 px-3">{row.orderNumber}</td>
+                        <td className="py-2 px-3">{row.method}</td>
+                        <td className="py-2 px-3">%{(row.rate * 100).toFixed(2)}</td>
+                        <td className="py-2 px-3">{currency.format(row.total)}</td>
+                        <td className="py-2 px-3">{currency.format(row.commission)}</td>
+                        <td className="py-2 px-3">{new Date(row.date).toLocaleDateString('tr-TR')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>

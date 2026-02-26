@@ -15,6 +15,7 @@ Bu klasor cPanel uzerinde React SPA + PHP API calistirmak ve WordPress ile birli
 1. `public_html` altindaki tum dosyalari cPanel `public_html` klasorune yukle.
 2. cPanel > MySQL Database Wizard ile DB ve user olustur.
 3. `php/db_setup.sql` ve `sql/orders_schema.sql` dosyalarini phpMyAdmin'de calistir.
+   - Admin urun/stok yonetimi icin ek olarak: `sql/admin_catalog_schema.sql`
 4. cPanel ortam degiskenlerini tanimla (ornek: `.env.cpanel.example`):
    - `DB_HOST`
    - `DB_NAME`
@@ -55,3 +56,11 @@ Onerilen model:
 - Otomatik deploy (Git + cPanel)
 
 Detayli plan dosyasi: `HOSTING_PRO_ROADMAP.md`
+
+## Yeni API'ler (Database Entegrasyonu)
+- `GET/POST /api/orders.php`
+  - `action=my`, `action=admin_list`, `action=detail`
+  - `action=update_status` (POST, admin)
+- `GET/POST /api/admin/catalog.php`
+  - `action=snapshot` (GET, admin)
+  - `action=save_snapshot` (POST, admin)

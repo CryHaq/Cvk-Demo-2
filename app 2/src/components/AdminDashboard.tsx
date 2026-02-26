@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   TrendingUp,
   ShoppingCart,
@@ -39,6 +39,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { orderApi } from '@/services/orderApi';
+import { adminCatalogApi } from '@/services/adminCatalogApi';
 import { useDataManager } from '@/services/dataManager';
 import { recommendationEngine } from '@/services/recommendationEngine';
 import { couponApi, type Coupon } from '@/services/couponApi';
@@ -694,6 +695,9 @@ export default function AdminDashboard() {
   const [backups, setBackups] = useState<any[]>([]);
   const [storageStats, setStorageStats] = useState<any>(null);
   const [recommendationStats, setRecommendationStats] = useState<any>(null);
+  const [remoteCatalogEnabled, setRemoteCatalogEnabled] = useState(false);
+  const [catalogLoaded, setCatalogLoaded] = useState(false);
+  const catalogSyncTimeoutRef = useRef<number | null>(null);
 
   const dataManager = useDataManager();
 
@@ -702,9 +706,10 @@ export default function AdminDashboard() {
     loadBackups();
     loadStorageStats();
     loadRecommendationStats();
-    loadProducts();
+    loadProductsFromLocal();
     loadCoupons();
-    loadDepots();
+    loadDepotsFromLocal();
+    loadCatalogFromBackend();
   }, []);
 
   const loadData = async () => {
@@ -733,7 +738,7 @@ export default function AdminDashboard() {
     setRecommendationStats(recommendationEngine.getStats());
   };
 
-  const loadProducts = () => {
+  const loadProductsFromLocal = () => {
     try {
       const raw = localStorage.getItem(PRODUCT_STORAGE_KEY);
       if (!raw) {
@@ -758,7 +763,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const loadDepots = () => {
+  const loadDepotsFromLocal = () => {
     try {
       const raw = localStorage.getItem(INVENTORY_DEPOTS_STORAGE_KEY);
       if (!raw) {
@@ -775,6 +780,39 @@ export default function AdminDashboard() {
     }
   };
 
+  const loadCatalogFromBackend = async () => {
+    const result = await adminCatalogApi.getSnapshot();
+    if (!result.success || !result.data) {
+      setRemoteCatalogEnabled(false);
+      setCatalogLoaded(true);
+      return;
+    }
+
+    const snapshot = result.data;
+    setRemoteCatalogEnabled(true);
+    setCatalogLoaded(true);
+
+    if (Array.isArray(snapshot.products) && snapshot.products.length > 0) {
+      setProducts(snapshot.products as ManagedProduct[]);
+    }
+
+    if (Array.isArray(snapshot.depots) && snapshot.depots.length > 0) {
+      setDepots(snapshot.depots);
+    }
+
+    if (Array.isArray(snapshot.depotStocks)) {
+      setDepotStocks(snapshot.depotStocks as InventoryDepotStock[]);
+    }
+
+    if (Array.isArray(snapshot.inventoryMovements)) {
+      setInventoryMovements(snapshot.inventoryMovements as InventoryMovement[]);
+    }
+
+    if (Array.isArray(snapshot.processedOrderIds)) {
+      localStorage.setItem(INVENTORY_PROCESSED_ORDERS_KEY, JSON.stringify(snapshot.processedOrderIds));
+    }
+  };
+
   const initializeInventoryForProducts = (sourceProducts: ManagedProduct[], depotList: string[]) => {
     const variants = sourceProducts.flatMap((product) =>
       product.variants.map((variant) => ({
@@ -784,18 +822,8 @@ export default function AdminDashboard() {
       }))
     );
 
-    let storedStocks: InventoryDepotStock[] = [];
-    let storedMovements: InventoryMovement[] = [];
-    try {
-      storedStocks = JSON.parse(localStorage.getItem(INVENTORY_STOCK_KEY) || '[]') as InventoryDepotStock[];
-    } catch {
-      storedStocks = [];
-    }
-    try {
-      storedMovements = JSON.parse(localStorage.getItem(INVENTORY_MOVEMENTS_KEY) || '[]') as InventoryMovement[];
-    } catch {
-      storedMovements = [];
-    }
+    const storedStocks: InventoryDepotStock[] = depotStocks;
+    const storedMovements: InventoryMovement[] = inventoryMovements;
 
     const variantIdSet = new Set(variants.map((variant) => variant.variantId));
     const cleanStocks = storedStocks.filter((item) => variantIdSet.has(item.variantId));
@@ -858,6 +886,30 @@ export default function AdminDashboard() {
       return { ...prev, depot: depots[0] || '' };
     });
   }, [depots]);
+
+  useEffect(() => {
+    if (!catalogLoaded || !remoteCatalogEnabled) return;
+    if (catalogSyncTimeoutRef.current) {
+      window.clearTimeout(catalogSyncTimeoutRef.current);
+    }
+
+    catalogSyncTimeoutRef.current = window.setTimeout(async () => {
+      const processedOrderIds = JSON.parse(localStorage.getItem(INVENTORY_PROCESSED_ORDERS_KEY) || '[]') as number[];
+      await adminCatalogApi.saveSnapshot({
+        products: products as any,
+        depots,
+        depotStocks: depotStocks as any,
+        inventoryMovements: inventoryMovements as any,
+        processedOrderIds: Array.isArray(processedOrderIds) ? processedOrderIds : [],
+      });
+    }, 700);
+
+    return () => {
+      if (catalogSyncTimeoutRef.current) {
+        window.clearTimeout(catalogSyncTimeoutRef.current);
+      }
+    };
+  }, [catalogLoaded, remoteCatalogEnabled, products, depots, depotStocks, inventoryMovements]);
 
   const sortedOrders = useMemo(
     () => [...orders].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
@@ -1279,9 +1331,10 @@ export default function AdminDashboard() {
 
   const refreshAdminData = async () => {
     await loadData();
-    loadProducts();
+    loadProductsFromLocal();
     await loadCoupons();
-    loadDepots();
+    loadDepotsFromLocal();
+    await loadCatalogFromBackend();
     loadBackups();
     loadStorageStats();
     loadRecommendationStats();

@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   chat: withApiBase('/php/chat.php'),
   contact: withApiBase('/php/contact.php'),
   orders: withApiBase('/api/orders.php'),
+  adminCatalog: withApiBase('/api/admin/catalog.php'),
   paymentCheckout: withApiBase('/api/payment/checkout.php'),
 } as const;
 

@@ -1,5 +1,7 @@
 // CVK Dijital - Order API Service
-// Mock API for local development
+// Uses SQL backend when available, falls back to local mock storage.
+
+import { API_ENDPOINTS, getAuthToken } from '@/lib/api';
 
 export interface Order {
   id: number;
@@ -111,15 +113,8 @@ export interface CreateOrderRequest {
   };
 }
 
-// Generate unique order number
-const generateOrderNumber = () => {
-  const prefix = 'CVK';
-  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `${prefix}-${date}-${random}`;
-};
+const hasBackend = () => Boolean((import.meta.env.VITE_API_BASE_URL || '').trim()) || window.location.protocol.startsWith('http');
 
-// Initialize mock orders from localStorage
 const getMockOrders = (): Order[] => {
   const stored = localStorage.getItem('cvk_mock_orders');
   return stored ? JSON.parse(stored) : [];
@@ -129,266 +124,250 @@ const saveMockOrders = (orders: Order[]) => {
   localStorage.setItem('cvk_mock_orders', JSON.stringify(orders));
 };
 
-// Get current user ID from auth
 const getCurrentUserId = (): number => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user.id || 1;
+  const raw = localStorage.getItem('cvk_user_v1') || localStorage.getItem('user') || '{}';
+  const user = JSON.parse(raw);
+  return Number(user.id) || 1;
 };
 
-// Order API Service
+async function requestApi(url: string, options: RequestInit = {}) {
+  const token = getAuthToken();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (options.headers && typeof options.headers === 'object' && !Array.isArray(options.headers)) {
+    Object.assign(headers, options.headers as Record<string, string>);
+  }
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  const data = await response.json();
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || 'API request failed');
+  }
+  return data;
+}
+
 export const orderApi = {
-  // Create new order
-  createOrder: async (data: CreateOrderRequest): Promise<{ success: boolean; data?: Order; message?: string }> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const orders = getMockOrders();
-        const newOrder: Order = {
-          id: Date.now(),
-          order_number: generateOrderNumber(),
-          user_id: getCurrentUserId(),
-          subtotal: data.subtotal,
-          vat_amount: data.vat_amount,
-          discount_amount: 0,
-          shipping_cost: 0,
-          total_amount: data.total_amount,
-          currency: 'EUR',
-          status: 'pending',
-          payment_status: 'pending',
-          shipping_address: data.shipping_address,
-          billing_address: data.billing_address,
-          items: data.items.map((item, index) => ({
-            id: Date.now() + index,
-            ...item,
-            has_zip: item.has_zip || false,
-            has_valve: item.has_valve || false,
-          })),
-          status_history: [
-            {
-              id: Date.now(),
-              new_status: 'pending',
-              changed_by: getCurrentUserId(),
-              changed_by_type: 'system',
-              note: 'Sipariş oluşturuldu',
-              created_at: new Date().toISOString(),
-            },
-          ],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
+  async createOrder(data: CreateOrderRequest): Promise<{ success: boolean; data?: Order; message?: string }> {
+    if (hasBackend()) {
+      try {
+        const apiData = await requestApi(API_ENDPOINTS.orders, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'create', ...data }),
+        });
 
-        orders.push(newOrder);
-        saveMockOrders(orders);
-
-        resolve({ success: true, data: newOrder });
-      }, 800);
-    });
-  },
-
-  // Get user's orders
-  getMyOrders: async (): Promise<{ success: boolean; data?: Order[]; message?: string }> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const orders = getMockOrders();
-        const userOrders = orders.filter(o => o.user_id === getCurrentUserId());
-        resolve({ success: true, data: userOrders });
-      }, 500);
-    });
-  },
-
-  // Get order details
-  getOrderDetails: async (orderId: number): Promise<{ success: boolean; data?: Order; message?: string }> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const orders = getMockOrders();
-        const order = orders.find(o => o.id === orderId);
-        
-        if (!order) {
-          resolve({ success: false, message: 'Sipariş bulunamadı' });
-          return;
-        }
-
-        // Check ownership
-        if (order.user_id !== getCurrentUserId()) {
-          const user = JSON.parse(localStorage.getItem('user') || '{}');
-          if (user.role !== 'admin') {
-            resolve({ success: false, message: 'Yetkisiz erişim' });
-            return;
+        if (apiData.data?.order_id) {
+          const detail = await this.getOrderDetails(apiData.data.order_id);
+          if (detail.success && detail.data) {
+            return { success: true, data: detail.data };
           }
         }
 
-        resolve({ success: true, data: order });
-      }, 500);
-    });
-  },
+        return { success: true, message: apiData.message || 'Sipariş oluşturuldu.' };
+      } catch (error) {
+        console.warn('Backend createOrder failed, fallback to mock:', error);
+      }
+    }
 
-  // Update order status (Admin only)
-  updateOrderStatus: async (
-    orderId: number, 
-    newStatus: Order['status'], 
-    note?: string
-  ): Promise<{ success: boolean; message?: string }> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const orders = getMockOrders();
-        const orderIndex = orders.findIndex(o => o.id === orderId);
-
-        if (orderIndex === -1) {
-          resolve({ success: false, message: 'Sipariş bulunamadı' });
-          return;
-        }
-
-        const order = orders[orderIndex];
-        const oldStatus = order.status;
-
-        // Update order
-        order.status = newStatus;
-        order.updated_at = new Date().toISOString();
-
-        // Add status history
-        order.status_history.push({
+    const orders = getMockOrders();
+    const newOrder: Order = {
+      id: Date.now(),
+      order_number: `CVK-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+      user_id: getCurrentUserId(),
+      subtotal: data.subtotal,
+      vat_amount: data.vat_amount,
+      discount_amount: 0,
+      shipping_cost: 0,
+      total_amount: data.total_amount,
+      currency: 'EUR',
+      status: 'pending',
+      payment_status: 'pending',
+      shipping_address: data.shipping_address,
+      billing_address: data.billing_address,
+      items: data.items.map((item, index) => ({ id: Date.now() + index, ...item, has_zip: !!item.has_zip, has_valve: !!item.has_valve })),
+      status_history: [
+        {
           id: Date.now(),
-          old_status: oldStatus,
-          new_status: newStatus,
+          new_status: 'pending',
           changed_by: getCurrentUserId(),
-          changed_by_type: 'admin',
-          note: note || `Durum ${oldStatus} -> ${newStatus} olarak değiştirildi`,
+          changed_by_type: 'system',
+          note: 'Sipariş oluşturuldu',
           created_at: new Date().toISOString(),
+        },
+      ],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    orders.push(newOrder);
+    saveMockOrders(orders);
+    return { success: true, data: newOrder };
+  },
+
+  async getMyOrders(): Promise<{ success: boolean; data?: Order[]; message?: string }> {
+    if (hasBackend()) {
+      try {
+        const apiData = await requestApi(`${API_ENDPOINTS.orders}?action=my`, { method: 'GET' });
+        return { success: true, data: apiData.data?.orders || [] };
+      } catch (error) {
+        console.warn('Backend getMyOrders failed, fallback to mock:', error);
+      }
+    }
+
+    const orders = getMockOrders();
+    const userOrders = orders.filter((o) => o.user_id === getCurrentUserId());
+    return { success: true, data: userOrders };
+  },
+
+  async getOrderDetails(orderId: number): Promise<{ success: boolean; data?: Order; message?: string }> {
+    if (hasBackend()) {
+      try {
+        const apiData = await requestApi(`${API_ENDPOINTS.orders}?action=detail&id=${orderId}`, { method: 'GET' });
+        return { success: true, data: apiData.data?.order };
+      } catch (error) {
+        console.warn('Backend getOrderDetails failed, fallback to mock:', error);
+      }
+    }
+
+    const orders = getMockOrders();
+    const order = orders.find((o) => o.id === orderId);
+    if (!order) return { success: false, message: 'Sipariş bulunamadı' };
+
+    if (order.user_id !== getCurrentUserId()) {
+      const user = JSON.parse(localStorage.getItem('cvk_user_v1') || localStorage.getItem('user') || '{}');
+      if (user.role !== 'admin') {
+        return { success: false, message: 'Yetkisiz erişim' };
+      }
+    }
+
+    return { success: true, data: order };
+  },
+
+  async updateOrderStatus(orderId: number, newStatus: Order['status'], note?: string): Promise<{ success: boolean; message?: string }> {
+    if (hasBackend()) {
+      try {
+        const apiData = await requestApi(API_ENDPOINTS.orders, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'update_status', orderId, status: newStatus, note }),
         });
+        return { success: true, message: apiData.message || 'Sipariş durumu güncellendi' };
+      } catch (error) {
+        console.warn('Backend updateOrderStatus failed, fallback to mock:', error);
+      }
+    }
 
-        // Update timestamps based on status
-        if (newStatus === 'shipped') {
-          order.shipping_company = 'Yurtiçi Kargo';
-          order.tracking_number = `1${Math.floor(Math.random() * 10000000000)}`;
-        }
+    const orders = getMockOrders();
+    const orderIndex = orders.findIndex((o) => o.id === orderId);
+    if (orderIndex === -1) return { success: false, message: 'Sipariş bulunamadı' };
 
-        saveMockOrders(orders);
-        resolve({ success: true, message: 'Sipariş durumu güncellendi' });
-      }, 600);
+    const order = orders[orderIndex];
+    const oldStatus = order.status;
+    order.status = newStatus;
+    order.updated_at = new Date().toISOString();
+    order.status_history.push({
+      id: Date.now(),
+      old_status: oldStatus,
+      new_status: newStatus,
+      changed_by: getCurrentUserId(),
+      changed_by_type: 'admin',
+      note: note || `Durum ${oldStatus} -> ${newStatus}`,
+      created_at: new Date().toISOString(),
     });
+
+    saveMockOrders(orders);
+    return { success: true, message: 'Sipariş durumu güncellendi' };
   },
 
-  // Process payment (Mock iyzico)
-  processPayment: async (orderId: number): Promise<{ success: boolean; message?: string; data?: any }> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const orders = getMockOrders();
-        const order = orders.find(o => o.id === orderId);
+  async processPayment(orderId: number): Promise<{ success: boolean; message?: string; data?: any }> {
+    const orders = getMockOrders();
+    const order = orders.find((o) => o.id === orderId);
+    if (!order) return { success: false, message: 'Sipariş bulunamadı' };
 
-        if (!order) {
-          resolve({ success: false, message: 'Sipariş bulunamadı' });
-          return;
-        }
+    const isSuccess = Math.random() > 0.1;
+    if (isSuccess) {
+      order.payment_status = 'paid';
+      order.status = 'confirmed';
+      order.payment_method = 'iyzico';
+      order.updated_at = new Date().toISOString();
+      saveMockOrders(orders);
+      return { success: true, message: 'Ödeme başarılı', data: { payment_id: `PAY-${Date.now()}` } };
+    }
 
-        // Simulate payment processing (90% success rate)
-        const isSuccess = Math.random() > 0.1;
-
-        if (isSuccess) {
-          order.payment_status = 'paid';
-          order.status = 'confirmed';
-          order.payment_method = 'iyzico';
-          order.updated_at = new Date().toISOString();
-
-          order.status_history.push({
-            id: Date.now(),
-            old_status: 'pending',
-            new_status: 'confirmed',
-            changed_by: 0,
-            changed_by_type: 'system',
-            note: 'Ödeme başarılı - iyzico',
-            created_at: new Date().toISOString(),
-          });
-
-          saveMockOrders(orders);
-          
-          // Send email notification (mock)
-          emailService.sendOrderConfirmation(order);
-
-          resolve({ 
-            success: true, 
-            message: 'Ödeme başarılı',
-            data: { payment_id: `PAY-${Date.now()}` }
-          });
-        } else {
-          order.payment_status = 'failed';
-          order.updated_at = new Date().toISOString();
-          saveMockOrders(orders);
-
-          resolve({ 
-            success: false, 
-            message: 'Kartınızda yetersiz bakiye veya banka reddetti' 
-          });
-        }
-      }, 1500);
-    });
+    order.payment_status = 'failed';
+    order.updated_at = new Date().toISOString();
+    saveMockOrders(orders);
+    return { success: false, message: 'Ödeme başarısız' };
   },
 
-  // Get all orders (Admin)
-  getAllOrders: async (_filters?: { status?: string; page?: number; limit?: number }): Promise<{ 
-    success: boolean; 
-    data?: { orders: Order[]; pagination: any }; 
-    message?: string 
-  }> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const orders = getMockOrders();
-        
-        // Sort by date
-        orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  async getAllOrders(filters?: { status?: string; page?: number; limit?: number }): Promise<{ success: boolean; data?: { orders: Order[]; pagination: any }; message?: string }> {
+    if (hasBackend()) {
+      try {
+        const params = new URLSearchParams({ action: 'admin_list' });
+        if (filters?.status) params.set('status', filters.status);
+        if (filters?.limit) params.set('limit', String(filters.limit));
 
-        resolve({ 
-          success: true, 
-          data: { 
-            orders,
-            pagination: {
-              total: orders.length,
-              page: 1,
-              limit: orders.length,
-              total_pages: 1
-            }
-          } 
-        });
-      }, 500);
-    });
-  },
-
-  // Get order statistics (Admin)
-  getOrderStats: async (): Promise<{ success: boolean; data?: any; message?: string }> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const orders = getMockOrders();
-        
-        const stats = {
-          total_orders: orders.length,
-          pending: orders.filter(o => o.status === 'pending').length,
-          confirmed: orders.filter(o => o.status === 'confirmed').length,
-          processing: orders.filter(o => o.status === 'processing').length,
-          shipped: orders.filter(o => o.status === 'shipped').length,
-          delivered: orders.filter(o => o.status === 'delivered').length,
-          total_revenue: orders
-            .filter(o => o.payment_status === 'paid')
-            .reduce((sum, o) => sum + o.total_amount, 0),
+        const apiData = await requestApi(`${API_ENDPOINTS.orders}?${params.toString()}`, { method: 'GET' });
+        return {
+          success: true,
+          data: {
+            orders: apiData.data?.orders || [],
+            pagination: apiData.data?.pagination || { total: 0, page: 1, limit: filters?.limit || 200, total_pages: 1 },
+          },
         };
+      } catch (error) {
+        console.warn('Backend getAllOrders failed, fallback to mock:', error);
+      }
+    }
 
-        resolve({ success: true, data: stats });
-      }, 400);
-    });
+    const orders = getMockOrders().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return {
+      success: true,
+      data: {
+        orders,
+        pagination: {
+          total: orders.length,
+          page: 1,
+          limit: orders.length,
+          total_pages: 1,
+        },
+      },
+    };
+  },
+
+  async getOrderStats(): Promise<{ success: boolean; data?: any; message?: string }> {
+    const all = await this.getAllOrders();
+    if (!all.success || !all.data) {
+      return { success: false, message: 'İstatistik alınamadı' };
+    }
+
+    const orders = all.data.orders;
+    const stats = {
+      total_orders: orders.length,
+      pending: orders.filter((o) => o.status === 'pending').length,
+      confirmed: orders.filter((o) => o.status === 'confirmed').length,
+      processing: orders.filter((o) => o.status === 'processing').length,
+      shipped: orders.filter((o) => o.status === 'shipped').length,
+      delivered: orders.filter((o) => o.status === 'delivered').length,
+      total_revenue: orders.filter((o) => o.payment_status === 'paid').reduce((sum, o) => sum + o.total_amount, 0),
+    };
+
+    return { success: true, data: stats };
   },
 };
 
-// Mock Email Service
 export const emailService = {
-  sendOrderConfirmation: (order: Order) => {
-    console.log(`[EMAIL] Order confirmation sent to ${order.shipping_address.email}`);
-    // In real implementation, this would call PHP backend
-  },
-  
-  sendPaymentReceived: (order: Order) => {
-    console.log(`[EMAIL] Payment received notification sent to ${order.shipping_address.email}`);
-  },
-  
-  sendOrderShipped: (order: Order) => {
-    console.log(`[EMAIL] Order shipped notification sent to ${order.shipping_address.email}`);
-  },
+  sendOrderConfirmation: (_order: Order) => {},
+  sendPaymentReceived: (_order: Order) => {},
+  sendOrderShipped: (_order: Order) => {},
 };
 
 export default orderApi;
